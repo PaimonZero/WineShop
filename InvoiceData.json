@@ -1,0 +1,91 @@
+[
+    {
+        "userId": { "$oid": "6841be0796a4205643f1f4c9" },
+        "products": [
+            {
+                "productId": { "$oid": "6846443725f0d891c0816261" },
+                "quantity": 2,
+                "price": 3000
+            },
+            {
+                "productId": { "$oid": "6846447625f0d891c0816263" },
+                "quantity": 1,
+                "price": 2500
+            }
+        ],
+        "totalAmount": 8500,
+        "deliveryStatus": "pending",
+        "paymentStatus": "pending",
+        "paymentMethod": "cash",
+        "shippingAddress": {
+            "name": "Nguyen Van A",
+            "phone": "0909123456",
+            "address": "123 Le Loi, Quan 1, HCM"
+        },
+        "createdAt": { "$date": "2024-06-01T10:00:00Z" },
+        "updatedAt": { "$date": "2024-06-01T10:00:00Z" }
+    },
+    {
+        "userId": { "$oid": "6841be0796a4205643f1f4c9" },
+        "products": [
+            {
+                "productId": { "$oid": "6847aa210274300086607a34" },
+                "quantity": 3,
+                "price": 150
+            }
+        ],
+        "totalAmount": 450,
+        "deliveryStatus": "shipped",
+        "paymentStatus": "paid",
+        "paymentMethod": "bankTransfer",
+        "shippingAddress": {
+            "name": "Tran Thi B",
+            "phone": "0911222333",
+            "address": "456 Nguyen Hue, Quan 1, HCM"
+        },
+        "createdAt": { "$date": "2024-06-02T11:00:00Z" },
+        "updatedAt": { "$date": "2024-06-02T11:00:00Z" }
+    },
+    {
+        "userId": { "$oid": "6841be0796a4205643f1f4c9" },
+        "products": [
+            {
+                "productId": { "$oid": "6846443725f0d891c0816261" },
+                "quantity": 1,
+                "price": 500
+            }
+        ],
+        "totalAmount": 500,
+        "deliveryStatus": "completed",
+        "paymentStatus": "paid",
+        "paymentMethod": "cash",
+        "shippingAddress": {
+            "name": "Le Van C",
+            "phone": "0988777666",
+            "address": "789 Tran Hung Dao, Quan 5, HCM"
+        },
+        "createdAt": { "$date": "2024-06-03T12:00:00Z" },
+        "updatedAt": { "$date": "2024-06-03T12:00:00Z" }
+    },
+    {
+        "userId": { "$oid": "6841be0796a4205643f1f4c9" },
+        "products": [
+            {
+                "productId": { "$oid": "6846443725f0d891c0816261" },
+                "quantity": 2,
+                "price": 250
+            }
+        ],
+        "totalAmount": 500,
+        "deliveryStatus": "cancelled",
+        "paymentStatus": "failed",
+        "paymentMethod": "bankTransfer",
+        "shippingAddress": {
+            "name": "Pham Thi D",
+            "phone": "0977555444",
+            "address": "321 Cach Mang Thang 8, Quan 10, HCM"
+        },
+        "createdAt": { "$date": "2024-06-04T13:00:00Z" },
+        "updatedAt": { "$date": "2024-06-04T13:00:00Z" }
+    }
+]

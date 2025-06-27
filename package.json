@@ -1,0 +1,46 @@
+{
+    "name": "barrel-vine-api",
+    "version": "1.0.0",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon server.js",
+        "start": "nodemon server.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cloudinary": "^1.41.3",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.5",
+        "crypto-js": "^4.2.0",
+        "dotenv": "^16.5.0",
+        "ejs": "^3.1.10",
+        "express": "^5.1.0",
+        "express-async-handler": "^1.2.0",
+        "express-ejs-layouts": "^2.5.1",
+        "jsonwebtoken": "^9.0.2",
+        "module-alias": "^2.2.3",
+        "mongoose": "^8.15.1",
+        "multer": "^2.0.1",
+        "multer-storage-cloudinary": "^4.0.0",
+        "nodemailer": "^7.0.3",
+        "qs": "^6.14.0",
+        "slugify": "^1.6.6"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.10"
+    },
+    "_moduleAliases": {
+        "@src": "src",
+        "@controllers": "src/controllers",
+        "@models": "src/models",
+        "@utils": "src/utils",
+        "@routes": "src/routes",
+        "@middlewares": "src/middlewares",
+        "@config": "src/config"
+    }
+}
