@@ -76,6 +76,11 @@ const login = asyncHandler(async (req, res) => {
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 7 * 60 * 60 * 1000, // 1 hour
+    });
     // Return user data (excluding password, role and refreshToken)
     const { password: _, role, refreshToken: _refresh, ...userData } = userResponse.toObject();
     return res.status(200).json({

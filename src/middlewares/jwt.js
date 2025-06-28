@@ -15,21 +15,25 @@ const generateRefreshToken = (_id) => {
 };
 
 const verifyAccessToken = asyncHandler(async (req, res, next) => {
-    // Check if the request has an Authorization header
-    // headers: {authorization: "Bearer <token>"}
+    let token = null;
     if (req?.headers?.authorization?.startsWith('Bearer')) {
-        const token = req.headers.authorization.split(' ')[1]; // Extract the token
-        jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ success: false, mes: 'Invalid access token!' });
-            }
-            // console.log(decoded);
-            req.user = decoded; // Attach user info to request object
-            next(); // Proceed to the next middleware or route handler
-        });
-    } else {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    // Nếu không có, thử lấy từ cookie
+    if (!token && req.cookies?.accessToken) {
+        token = req.cookies.accessToken;
+    }
+    if (!token) {
         return res.status(401).json({ success: false, mes: 'Require authentication!' });
     }
+    jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ success: false, mes: 'Invalid access token!' });
+        }
+        // console.log(decoded);
+        req.user = decoded;     // Attach user info to request object
+        next();                 // Proceed to the next middleware or route handler
+    });
 });
 
 const isAdmin = (req, res, next) => {
