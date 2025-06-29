@@ -238,6 +238,31 @@ input.searchInput::placeholder {
 
 }
 
+/* Nam fix search-box */
+/* Responsive: Tablet và Mobile */
+@media (max-width: 992px) {
+    .search-box {
+        margin-right: 10px;
+    }
+
+    .search-box.open .search-input {
+        width: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-box.open .search-input {
+        width: 240px;
+    }
+}
+
+@media (max-width: 576px) {
+    .search-box.open .search-input {
+        width: 200px;
+    }
+}
+/* End fix */
+
 /* body */
 body {
     font-family: 'Inter', sans-serif;

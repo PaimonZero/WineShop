@@ -3,6 +3,7 @@ const productRouter = require('@routes/productRoutes');
 const categoryRouter = require('@routes/categoryRoutes');
 const couponRouter = require('@routes/couponRoutes');
 const invoiceRouter = require('@routes/invoiceRoutes');
+const adminRouter = require('@routes/adminRoutes');
 const { notFound, errorHandler } = require('@middlewares/errorHandler');
 const tokenUtils = require('@middlewares/jwt');
 
@@ -17,6 +18,8 @@ const initRoutes = (app) => {
     app.use('/api/coupon', couponRouter);
     // page invoice
     app.use('/api/invoice', invoiceRouter);
+    // page admin
+    app.use('/api/admin', adminRouter);
 
     // handle 404 - This should be the last route
     app.use(notFound);
