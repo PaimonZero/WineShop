@@ -148,7 +148,7 @@
 }
 /*body*/
 .pro-img1 {
-    background-image: url('../../images/Picture1.png');
+    background-image: url('https://theme.hstatic.net/200000692767/1001263827/14/section_bannerCus_img_2.jpg?v=2385');
     background-repeat: no-repeat;
     background-size: 100% 550px;
     padding-top: 30px;
@@ -158,7 +158,7 @@
 }
 
 .pro-img2 {
-    background-image: url('../../images/Picture2.png');
+    background-image: url('https://theme.hstatic.net/200000692767/1001263827/14/section_bannerCus_img_1.jpg?v=2385');
     background-repeat: no-repeat;
     background-size: 100% 550px;
     padding-top: 30px;
@@ -168,7 +168,7 @@
 }
 
 .pro-img3 {
-    background-image: url('../../images/Picture3.png');
+    background-image: url('https://theme.hstatic.net/200000692767/1001263827/14/section_bannerCus_img_4.jpg?v=2385');
     background-repeat: no-repeat;
     background-size: 100% 550px;
     padding-top: 30px;
@@ -260,7 +260,7 @@
 }
 
 .list-img {
-    background-image: url('../../images/list1.png');
+    background-image: url('https://theme.hstatic.net/200000692767/1001263827/14/section_bannerCus_img_1.jpg?v=2385');
     background-repeat: no-repeat;
     background-size: 100% 332px;
     padding-top: 30px;
@@ -335,7 +335,7 @@
 }
 
 .sale {
-    background-image: url("../../images/sale.png");
+    background-image: url("https://theme.hstatic.net/200000692767/1001263827/14/section_bannerCus_img_3.jpg?v=2385");
     background-size: 90% 417px;
     background-repeat: no-repeat;
     height: 417px;
