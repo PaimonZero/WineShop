@@ -76,7 +76,7 @@ const login = asyncHandler(async (req, res) => {
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    res.cookie("accessToken", accessToken, {
+    res.cookie('accessToken', accessToken, {
         httpOnly: true,
         sameSite: 'strict',
         maxAge: 7 * 60 * 60 * 1000, // 1 hour
@@ -276,13 +276,14 @@ const updateUserAddress = asyncHandler(async (req, res) => {
     });
 });
 
-// [PUT] update cart (add or update product in cart) ( cho button "Add to cart" trong trang sản phẩm )
+// [POST] update cart (add or update product in cart) ( cho button "Add to cart" trong trang sản phẩm )
 const updateCart = asyncHandler(async (req, res) => {
-    const {_id} = req.user;
-    const { productId, quantity } = req.body;
+    const { _id } = req.user;
+
+    const { productId, quantity, returnTo } = req.body;
     if (!productId || !quantity) throw new Error('ProductId and quantity are required!');
     const user = await User.findById(_id);
-    const alreadyProduct = user.cart.find(item => item.product.toString() === productId);
+    const alreadyProduct = user.cart.find((item) => item.product.toString() === productId);
     const qty = parseInt(quantity); // Ép kiểu an toàn
     if (alreadyProduct) {
         // Nếu sản phẩm đã có trong giỏ hàng, cập nhật số lượng
@@ -293,12 +294,13 @@ const updateCart = asyncHandler(async (req, res) => {
         user.cart.push({ product: productId, quantity: qty });
         await user.save();
     }
-    return res.status(200).json({
-        success: true,
-        mes: 'Cart updated successfully!',
-        cart: user.cart,
-    });
-})
+    res.redirect(returnTo);
+    // return res.status(200).json({
+    //     success: true,
+    //     mes: 'Cart updated successfully!',
+    //     cart: user.cart,
+    // });
+});
 
 // [PUT] update cart quantity ( cho button "Increase" và "Decrease" trong trang giỏ hàng )
 // TODO: có ví dụ sử dụng ajax (js in ejs page) ko cần reload trang
@@ -310,7 +312,7 @@ const updateCartQuantity = asyncHandler(async (req, res) => {
     }
 
     const user = await User.findById(_id);
-    const cartItem = user.cart.find(item => item.product.toString() === productId);
+    const cartItem = user.cart.find((item) => item.product.toString() === productId);
     if (!cartItem) {
         return res.status(400).json({ success: false, mes: 'Product not found in cart!' });
     }
@@ -327,7 +329,7 @@ const updateCartQuantity = asyncHandler(async (req, res) => {
     } else if (action === 'decrease') {
         cartItem.quantity -= 1;
         if (cartItem.quantity < 1) {
-            user.cart = user.cart.filter(item => item.product.toString() !== productId);
+            user.cart = user.cart.filter((item) => item.product.toString() !== productId);
         }
     } else {
         return res.status(400).json({ success: false, mes: 'Invalid action!' });
@@ -340,7 +342,6 @@ const updateCartQuantity = asyncHandler(async (req, res) => {
         cart: user.cart,
     });
 });
-
 
 module.exports = {
     register,

@@ -1,0 +1,195 @@
+<link rel="stylesheet" href="/css/customerCss/productDetail.css" />
+
+
+<section class="container" style="padding-top: 130px;">
+  <div class="row">
+    <!-- Product Image -->
+    <div class="col-md-6">
+      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <% product.images.forEach((image, index) => { %>
+          <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+            <img src="<%= image %>" class="d-block w-100" alt="Slide <%= index + 1 %>">
+          </div>
+          <% }); %>
+        </div>
+
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+
+      </div>
+      <div style="display: flex; justify-content: center; margin-top: 20px;">
+        <% product.images.forEach(( image, index) => { %>
+        <img src="<%=  image %>" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="<%= index %>" class="thumbnail mx-1 <%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : '' %>" style="width: 20%; height: 100px; border: 2px solid #ccc; border-radius: 10px; cursor: pointer; object-fit: contain;" />
+        <% }); %>
+
+
+      </div>
+    </div>
+    <!-- Product Information -->
+    <div class="col-md-6">
+      <h3 class="product-title"><%= product.title %></h3>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span style="font-size: 18px;" class="badge <%= product.status === 'inStock' ? 'bg-success' : (product.status === 'outOfStock' ? 'bg-danger' : '') %>">
+          <%= product.status %>
+        </span>
+
+
+        <% 
+  const fullStars = Math.floor(product.totalRating); // số sao đầy
+  const halfStar = product.totalRating % 1 >= 0.5;   // có nửa sao không
+  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); 
+%>
+
+        <div class="product-rating">
+          <% for(let i = 0; i < fullStars; i++) { %>
+          <i class="bi bi-star-fill text-warning"></i>
+          <% } %>
+
+          <% if (halfStar) { %>
+          <i class="bi bi-star-half text-warning"></i>
+          <% } %>
+
+          <% for(let i = 0; i < emptyStars; i++) { %>
+          <i class="bi bi-star text-warning"></i>
+          <% } %>
+        </div>
+
+      </div>
+
+      <p class="product-price text-danger fs-4">
+        <!-- Hiển thị giá bình thường nếu không có chiết khấu -->
+        <%= product.price.toLocaleString('vi-VN') %> ₫
+      </p>
+      <p><strong>Loại:</strong> <span><%= product.category.title %></span> | <strong>Thương hiệu:</strong> <span><%= product.brand %></span></p>
+      <form action="/api/user/cart/" method="POST">
+        <input type="hidden" name="returnTo" value="<%= returnTo %>" />
+        <div class="product-quantity d-flex align-items-center mb-4">
+          <label class="me-3">Số lượng:</label>
+          <input type="number" name="quantity" value="1" min="1" max="<%= product.quantity %>" class="form-control w-25" />
+          <span>&nbsp;/ <%= product.quantity %></span>
+        </div>
+
+        <input type="hidden" name="productId" id="id" value="<%= product._id %>" />
+        <% if (product.status === 'inStock') { %>
+        <button type="submit" class="btn btn-success btn-lg w-100 mb-3 position-relative add-btn">
+          Thêm vào giỏ hàng
+          <i class="fas fa-cart-plus cart-icon"></i>
+        </button>
+        <% } else { %>
+        <button type="button" class="btn btn-secondary btn-lg w-100 mb-3 position-relative add-btn" disabled>
+          Hết hàng
+          <i class="fas fa-cart-plus cart-icon"></i>
+        </button>
+        <% } %>
+
+      </form>
+
+
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <a href="#" class="text-decoration-none">Chia sẻ:</a>
+          <div class="connect-social share-icon">
+            <ul class="d-flex px-2">
+              <li><a href="#" class="social-button facebook"><i class="fab fa-facebook"></i></a>
+              </li>
+              <li><a href="#" class="social-button twitter"><i class="fab fa-twitter"></i></a>
+              </li>
+              <li><a href="#" class="social-button"><i class="fab fa-pinterest-p"></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <a href="#" class="btn btn-outline-primary">Yêu Thích</a>
+      </div>
+      <div class="box mt-4">
+        <div class="box-header">
+          <h4>Nhận ngay khuyến mại đặc biệt</h4>
+        </div>
+        <div class="box-content">
+          <div>
+            <li>
+              <span><i class="icon fas fa-check-circle" style="color: #48bb78;"></i></span>
+              <h5>Tham gia chương trình rút thăm trúng thưởng với cơ hội nhận chai vang cao cấp trị giá lên đến 10.000.000₫</h5>
+            </li>
+            <li>
+              <span><i class="icon fas fa-check-circle" style="color: #48bb78;"></i></span>
+              <h5>Nhận bộ ly pha lê nhập khẩu trị giá 5.000.000₫ khi mua combo rượu đặc biệt</h5>
+            </li>
+            <li>
+              <span><i class="icon fas fa-check-circle" style="color: #48bb78;"></i></span>
+              <h5>Tặng phiếu mua hàng trị giá 500.000₫ mỗi tháng cho khách hàng thân thiết</h5>
+            </li>
+            <li>
+              <span><i class="icon fas fa-check-circle" style="color: #48bb78;"></i></span>
+              <h5>Miễn phí túi đựng rượu sang trọng cho đơn hàng từ 2 chai trở lên</h5>
+            </li>
+            <li>
+              <span><i class="icon fas fa-check-circle" style="color: #48bb78;"></i></span>
+              <h5>Ưu đãi thêm 40.000₫ khi chọn các dòng vang theo mùa</h5>
+            </li>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">Mô Tả</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">Thông Tin Chi Tiết</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">Nhận Xét Khác Hàng</button>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-3" id="myTabContent">
+        <div class="tab-pane fade show active" id="description" role="tabpanel">
+          <p><%= product.title %></p>
+        </div>
+        <div class="tab-pane fade" id="details" role="tabpanel">
+          <p><%= product.description %></p>
+        </div>
+        <div class="tab-pane fade" id="reviews" role="tabpanel">
+          <p>Good</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <div class="related-products mt-5 mb-3">
+    <h4 class="mb-4">Sản Phẩm Liên Quan</h4>
+    <div class="row">
+      <% relatedProducts.forEach(p => { %>
+      <div class="col-md-3">
+        <div class="card">
+          <a href="/product/<%= p._id %>/<%= p.slug %>">
+            <img src="<%= p.images[0] %>" class="card-img-top" alt="<%= p.title %>">
+          </a>
+          <div class="card-body">
+            <h5 class="card-title"><%= p.title %></h5>
+            <p class="card-text text-danger">
+              <%= p.price.toLocaleString('vi-VN') %>₫
+            </p>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+
+
+
+    </div>
+  </div>
+</section>

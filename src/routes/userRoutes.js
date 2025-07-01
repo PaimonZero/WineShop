@@ -25,8 +25,8 @@ router.put('/current', tokenUtils.verifyAccessToken, ctrls.updateUser);
 // [PUT] update user address (for all users)
 router.put('/current/address', tokenUtils.verifyAccessToken, ctrls.updateUserAddress);
 
-// [PUT] update user cart (for all users) ("Add to cart")
-router.put('/cart', tokenUtils.verifyAccessToken, ctrls.updateCart);
+// [POST] update user cart (for all users) ("Add to cart")
+router.post('/cart', tokenUtils.verifyAccessToken, ctrls.updateCart);
 // [PUT] update user cart (for all users) ("Increase" và "Decrease")
 router.put('/cart/quantity', tokenUtils.verifyAccessToken, ctrls.updateCartQuantity);
 
