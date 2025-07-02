@@ -48,7 +48,7 @@ const mailResetPassword = (resetToken) => {
                         You’ve requested to reset your password for your Barrel&Vine account. 
                         Click the button below to pour a new password into your account. This link expires in 10 minutes, so act quickly!
                     </p>
-                    <a href="${env.CLIENT_URL}/user/reset-password/${resetToken}" 
+                    <a href="${env.CLIENT_URL}/auth/reset-password/${resetToken}" 
                         class="btn btn-primary" 
                         style="display: inline-block; padding: 12px 30px; background-color: #8b0000; color: #ffffff; font-size: 16px; font-weight: 600; border-radius: 5px; text-decoration: none; margin: 20px 0;">
                         Reset Your Password

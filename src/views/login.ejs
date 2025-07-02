@@ -1,0 +1,56 @@
+<style>
+  body {
+    background-color: #f5e6e8;
+  }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100" style="margin-top: -6rem;">
+  <div class="card shadow p-4" style="max-width: 420px; width: 100%; background-color: rgba(255, 255, 255, 0.9);">
+    <h3 class="text-center mb-4">Sign in</h3>
+
+    <!-- Login Form -->
+    <form action="/auth/login" method="POST">
+      <div class="mb-3">
+        <label for="email" class="form-label">
+          <i class="fas fa-envelope text-muted me-1"></i> Email address
+        </label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com"
+               autocomplete="username" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">
+          <i class="fas fa-lock text-muted me-1"></i> Password
+        </label>
+        <input type="password" class="form-control" id="password" name="password"
+               placeholder="Enter your password here" autocomplete="current-password" required />
+      </div>
+
+      <div class="d-grid mb-2">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+
+      <div class="text-center">
+        <a href="/auth/forgot-password" class="text-decoration-none">Forgot your password?</a>
+      </div>
+    </form>
+
+    <!-- Divider -->
+    <div class="text-center my-1">
+      <span class="text-muted">or</span>
+    </div>
+
+    <!-- Google Login Button -->
+    <div class="d-grid mb-3">
+      <a href="/auth/google" class="btn btn-outline-danger">
+        <i class="fab fa-google me-2"></i> Sign in with Google
+      </a>
+    </div>
+
+    <!-- Link to Register -->
+    <div class="text-center">
+      <span>Don't have an account?</span>
+      <a href="/auth/register" class="text-decoration-none">Sign up</a>
+    </div>
+  </div>
+</div>
