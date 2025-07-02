@@ -1,0 +1,109 @@
+<link rel="stylesheet" href="/css/customerCss/ShoppingCart.css">
+
+<div class="container mb-3">
+  <h3 class="text-center mt-3 fw-bold">Giỏ hàng của tôi</h3>
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-lg-8">
+              <div class="table-responsive table-container">
+                <table class="table table-borderless table-nowrap table-centered mb-0">
+                  <thead class="table-light">
+                    <tr class="table-header">
+                      <th class="first-column">Sản phẩm</th>
+                      <th class="text-center">Giá</th>
+                      <th class="second-column">Số lượng</th>
+                      <th colspan="2">Tổng tiền</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="cart-list">
+                    <!-- render UI CART LIST from JS -->
+                  </tbody>
+                </table>
+
+              </div> <!-- end table-responsive-->
+              <div class="mt-3 d-flex">
+                <a href="/">
+                  <button class="btn" style="background-color: #ddd; font-weight: bold; border-radius: 50px; padding: 10px 20px;font-size: 15px;">Tiếp
+                    tục mua hàng</button>
+                </a>
+              </div>
+              <div class="coupon mt-4">
+                <div class="row">
+                  <div class="col-md-3 pt-2">
+                    <h4>Coupon Code</h4>
+                  </div>
+                  <div class="col-md-9 position-relative">
+                    <form onsubmit="return getCoupon(event)">
+                      <input type="text" id="coupon-code" style="border-radius: 50px; padding: 10px 20px;" class="form-control" placeholder="Enter your coupon code" />
+                      <button type="submit" class="btn btn-dark apply-btn">Apply
+                        coupon</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end col -->
+
+            <div class="col-lg-4">
+              <div class="border p-3 mt-4 mt-lg-0 rounded">
+                <h4 class="header-title mb-3">Tổng giá trị giỏ hàng</h4>
+                <form action="checkOut?action=listCart" method="POST">
+                  <div class="table-responsive">
+                    <table class="table mb-0">
+                      <tbody>
+                        <tr>
+                          <td>Khuyến mãi :</td>
+                          <td>
+                            <div id="discount-amount" class="discount-amount" style="text-align: right;">-0 đ</div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Tổng cộng :</td>
+                          <td>
+                            <div id="total-amount" class="total-amount" style="text-align: right;">0 đ</div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Phí vận chuyển :</td>
+                          <td>
+                            <div class="shipping-amount" style="text-align: right;">-0 đ</div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Tổng tiền phải thanh toán :</th>
+                          <th>
+                            <div id="final-total" class="final-total" style="text-align: right;">0 đ</div>
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <button id="btn-pay" type="submit" class="process-pay-btn btn w-100 mt-4">Đi đến thanh
+                      toán</button>
+                  </div>
+                </form>
+                <!-- end table-responsive -->
+              </div>
+            </div> <!-- end col -->
+
+          </div> <!-- end row -->
+        </div> <!-- end card-body-->
+      </div> <!-- end card-->
+    </div> <!-- end col -->
+  </div>
+</div>
+
+<script>
+  let cart = <%- JSON.stringify(cart) %>;
+  let discount = 0;
+  cart.forEach(item => {
+    if (typeof item.isChecked === 'undefined') {
+      item.isChecked = false;
+    }
+  });
+</script>
+
+<script src="/js/authJs/ShoppingCart.js"></script>

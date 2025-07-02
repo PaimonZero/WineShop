@@ -14,6 +14,25 @@ const generateRefreshToken = (_id) => {
     });
 };
 
+const verifyLogedin = asyncHandler(async (req, res, next) => {
+    let token = null;
+    if (req?.headers?.authorization?.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    // Nếu không có, thử lấy từ cookie
+    if (!token && req.cookies?.accessToken) {
+        token = req.cookies.accessToken;
+    }
+    jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            next();
+        }
+        req.user = decoded; // Attach user info to request object
+
+        next(); // Proceed to the next middleware or route handler
+    });
+});
+
 const verifyAccessToken = asyncHandler(async (req, res, next) => {
     let token = null;
     if (req?.headers?.authorization?.startsWith('Bearer')) {
@@ -23,6 +42,7 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
     if (!token && req.cookies?.accessToken) {
         token = req.cookies.accessToken;
     }
+
     if (!token) {
         return res.status(401).json({ success: false, mes: 'Require authentication!' });
     }
@@ -30,9 +50,9 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
         if (err) {
             return res.status(401).json({ success: false, mes: 'Invalid access token!' });
         }
-        // console.log(decoded);
-        req.user = decoded;     // Attach user info to request object
-        next();                 // Proceed to the next middleware or route handler
+        req.user = decoded; // Attach user info to request object
+
+        next(); // Proceed to the next middleware or route handler
     });
 });
 
@@ -46,8 +66,9 @@ const isAdmin = (req, res, next) => {
 const tokenUtils = {
     generateAccessToken,
     generateRefreshToken,
+    verifyLogedin,
     verifyAccessToken,
-    isAdmin
+    isAdmin,
 };
 
 module.exports = tokenUtils;

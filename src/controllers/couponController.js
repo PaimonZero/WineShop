@@ -10,11 +10,40 @@ const createNewCoupon = asyncHandler(async (req, res) => {
     const coupon = await Coupon.create({
         name,
         discount,
-        expiry: new Date() + +expiry * 24 * 60 * 60 * 1000, // expiry in days
+        expiry: new Date(Date.now() + expiry * 24 * 60 * 60 * 1000), // expiry in days
     });
     res.status(201).json({
         success: coupon ? true : false,
         message: coupon ? 'Coupon created successfully' : 'Failed to create coupon',
+        coupon,
+    });
+});
+
+// Get all coupons
+const getCoupon = asyncHandler(async (req, res) => {
+    const { code } = req.query;
+
+    const coupon = await Coupon.findOne({ name: code });
+
+    if (!coupon) {
+        return res.status(404).json({
+            success: false,
+            message: 'Mã giảm giá không tồn tại',
+        });
+    }
+
+    // ✅ Kiểm tra hạn sử dụng
+    const now = new Date();
+    if (coupon.expiry && coupon.expiry < now) {
+        return res.status(400).json({
+            success: false,
+            message: 'Mã giảm giá đã hết hạn',
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: 'Mã giảm giá hợp lệ',
         coupon,
     });
 });
@@ -63,6 +92,7 @@ const deleteCoupon = asyncHandler(async (req, res) => {
 
 module.exports = {
     createNewCoupon,
+    getCoupon,
     getCoupons,
     updateCoupon,
     deleteCoupon,

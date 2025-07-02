@@ -36,7 +36,7 @@ const getCustomerHomePage = asyncHandler(async (req, res) => {
 
     res.render('customer/homepage', {
         title: 'WineShop Home Page',
-        account: { role: 'customer' },
+        account: req.user ? { role: req.user.role } : null,
         featuredProducts,
         promotionalProducts,
         sellingProducts,

@@ -36,19 +36,19 @@
           </div>
           <div class="offcanvas-body">
             <div class="sidebar-container">
-              <a class="nav-link active" href="category?food=Fruits">
+              <a class="nav-link active" href="category?type=Wine">
                 <i class="fas fa-wine-glass-alt"></i> Rượu vang
               </a>
-              <a class="nav-link" href="category?food=Vegetables">
+              <a class="nav-link" href="category?type=Bordeaux">
                 <i class="fas fa-seedling"></i> Bordeaux
               </a>
-              <a class="nav-link" href="category?food=Seafood">
+              <a class="nav-link" href="category?type=Bourgogne">
                 <i class="fas fa-glass-whiskey"></i> Bourgogne
               </a>
-              <a class="nav-link" href="category?food=Meat">
+              <a class="nav-link" href="category?type=Champagne">
                 <i class="fas fa-glass-cheers"></i> Champagne
               </a>
-              <a class="nav-link" href="category?food=Egg">
+              <a class="nav-link" href="category?type=Sparkling">
                 <i class="fas fa-egg"></i> Rượu vang nổ
               </a>
             </div>
@@ -160,7 +160,7 @@
     <div class="col-md-3 list-img mt-3">
       <h6 style="text-transform: uppercase; font-weight: bold; color: #ffb0b0">Mùa đông sale sập sàn</h6>
       <h1 style="text-transform: uppercase; color: #fff">sale 75%</h1>
-      <a href="category?food=Vegetables" class="shop-now-btn">
+      <a href="category?type=Bordeaux" class="shop-now-btn">
         <button class="mt-3 btn btn-light text-success position-relative fw-bold border border-success px-5">
           Mua ngay
           <i class="fas fa-arrow-right position-absolute"></i>
@@ -174,7 +174,7 @@
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-4">
           <div class="card outstand">
-            <a href="productDetail?id=${<%= product.id %>}">
+            <a href="product/<%= product.id %>/<%= product.slug %>">
               <img src="<%= product.images[0] %>" class="card-img-top" alt="..." />
             </a>
             <div class="icons">
@@ -212,20 +212,36 @@
                                             </c:otherwise>
                                         </c:choose> -->
 
-                  <div>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
+                  <% 
+                                        const fullStars = Math.floor(product.totalRating); // số sao đầy
+                                        const halfStar = product.totalRating % 1 >= 0.5;   // có nửa sao không
+                                        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); 
+                                      %>
+
+                  <div class="product-rating">
+                    <% for(let i = 0; i < fullStars; i++) { %>
+                    <i class="bi bi-star-fill text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% if (halfStar) { %>
+                    <i class="bi bi-star-half text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% for(let i = 0; i < emptyStars; i++) { %>
+                    <i class="bi bi-star text-warning" style="font-size: 12px;"></i>
+                    <% } %>
                   </div>
                 </div>
                 <div class="col-md-6 d-flex align-items-center buy-btn">
-                  <button class="fas fa-shopping-bag openCartBtn"></button>
+                  <a href="product/<%= product.id %>/<%= product.slug %>">
+                    <button class="fas fa-shopping-bag openCartBtn"></button>
+                  </a>
                 </div>
               </div>
               <div class="buy-mobile">
-                <button class="btn btn-primary w-100">Mua</button>
+                <a href="product/<%= product.id %>/<%= product.slug %>">
+                  <button class="btn btn-primary w-100">Mua</button>
+                </a>
               </div>
             </div>
           </div>
@@ -235,7 +251,7 @@
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-4">
           <div class="card outstand">
-            <a href="productDetail?id=${p.productId}">
+            <a href="product/<%= product.id %>/<%= product.slug %>">
               <img src="/images2/cate001.png" class="card-img-top" alt="..." />
             </a>
             <div class="icons">
@@ -302,7 +318,7 @@
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-4">
           <div class="card outstand">
-            <a href="productDetail?id=${p.productId}">
+            <a href="product/<%= product.id %>/<%= product.slug %>">
               <img src="/images2/cate001.png" class="card-img-top" alt="..." />
             </a>
             <div class="icons">
@@ -369,7 +385,7 @@
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-4">
           <div class="card outstand">
-            <a href="productDetail?id=${p.productId}">
+            <a href="product/<%= product.id %>/<%= product.slug %>">
               <img src="/images2/cate001.png" class="card-img-top" alt="..." />
             </a>
             <div class="icons">
@@ -436,7 +452,7 @@
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-4">
           <div class="card outstand">
-            <a href="productDetail?id=${p.productId}">
+            <a href="product/<%= product.id %>/<%= product.slug %>">
               <img src="/images2/cate001.png" class="card-img-top" alt="..." />
             </a>
             <div class="icons">
@@ -534,7 +550,7 @@
             <div class="label">Giây</div>
           </div>
         </div>
-        <a href="category?food=Vegetables" class="shop-now-btn">
+        <a href="category?type=Bordeaux" class="shop-now-btn">
           <button class="mt-4 btn btn-light text-success position-relative fw-bold">
             Shop now
             <i class="fas fa-arrow-right position-absolute"></i>
@@ -547,7 +563,7 @@
         <h6>PREMIUM QUALITY</h6>
         <h1>Rượu vang cao cấp</h1>
         <h5>Chỉ từ <strong>2.000.000đ</strong></h5>
-        <a href="category?food=Meat" class="shop-now-btn">
+        <a href="category?type=Champagne" class="shop-now-btn">
           <button class="mt-5 btn btn-light text-success position-relative fw-bold">
             Shop now
             <i class="fas fa-arrow-right position-absolute"></i>
@@ -565,7 +581,7 @@
           </span>
         </span>
         <br />
-        <a href="category?food=Fruits" class="shop-now-btn">
+        <a href="category?type=Wine" class="shop-now-btn">
           <button class="mt-5 btn btn-light text-success position-relative fw-bold">
             Shop now
             <i class="fas fa-arrow-right position-absolute"></i>
@@ -737,7 +753,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=<%= product.id %>">
+                <a href="product/<%= product.id %>/<%= product.slug %>%>">
                   <img src="<%= product.images[0] %>" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -745,12 +761,24 @@
                 <div class="card-body">
                   <h6 class="card-title text-muted"><%= product.title %></h6>
                   <p class="card-text fw-bold" style="margin: 0"><%= product.price.toLocaleString('vi-VN') %>đ</p>
-                  <div>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
+                  <% 
+                                        const fullStars = Math.floor(product.totalRating); // số sao đầy
+                                        const halfStar = product.totalRating % 1 >= 0.5;   // có nửa sao không
+                                        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); 
+                                      %>
+
+                  <div class="product-rating">
+                    <% for(let i = 0; i < fullStars; i++) { %>
+                    <i class="bi bi-star-fill text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% if (halfStar) { %>
+                    <i class="bi bi-star-half text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% for(let i = 0; i < emptyStars; i++) { %>
+                    <i class="bi bi-star text-warning" style="font-size: 12px;"></i>
+                    <% } %>
                   </div>
                 </div>
               </div>
@@ -847,7 +875,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=<%= product.id %>">
+                <a href="product/<%= product.id %>/<%= product.slug %>%>">
                   <img src="/images2/cate2.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -855,12 +883,24 @@
                 <div class="card-body">
                   <h6 class="card-title text-muted"><%= product.title %></h6>
                   <p class="card-text fw-bold" style="margin: 0"><%= product.price.toLocaleString('vi-VN') %>đ</p>
-                  <div>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
+                  <% 
+                                        const fullStars = Math.floor(product.totalRating); // số sao đầy
+                                        const halfStar = product.totalRating % 1 >= 0.5;   // có nửa sao không
+                                        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); 
+                                      %>
+
+                  <div class="product-rating">
+                    <% for(let i = 0; i < fullStars; i++) { %>
+                    <i class="bi bi-star-fill text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% if (halfStar) { %>
+                    <i class="bi bi-star-half text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% for(let i = 0; i < emptyStars; i++) { %>
+                    <i class="bi bi-star text-warning" style="font-size: 12px;"></i>
+                    <% } %>
                   </div>
                 </div>
               </div>
@@ -874,7 +914,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=${p.productId}">
+                <a href="product/<%= product.id %>/<%= product.slug %>">
                   <img src="/images2/cate2.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -900,7 +940,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=${p.productId}">
+                <a href="product/<%= product.id %>/<%= product.slug %>">
                   <img src="/images2/cate2.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -926,7 +966,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=${p.productId}">
+                <a href="product/<%= product.id %>/<%= product.slug %>">
                   <img src="/images2/cate2.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -960,7 +1000,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=<%= product.id %>">
+                <a href="product/<%= product.id %>/<%= product.slug %>%>">
                   <img src="/images2/cate2.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -968,12 +1008,24 @@
                 <div class="card-body">
                   <h6 class="card-title text-muted"><%= product.title %></h6>
                   <p class="card-text fw-bold" style="margin: 0"><%= product.price.toLocaleString('vi-VN') %>đ</p>
-                  <div>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
+                  <% 
+                                        const fullStars = Math.floor(product.totalRating); // số sao đầy
+                                        const halfStar = product.totalRating % 1 >= 0.5;   // có nửa sao không
+                                        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); 
+                                      %>
+
+                  <div class="product-rating">
+                    <% for(let i = 0; i < fullStars; i++) { %>
+                    <i class="bi bi-star-fill text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% if (halfStar) { %>
+                    <i class="bi bi-star-half text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% for(let i = 0; i < emptyStars; i++) { %>
+                    <i class="bi bi-star text-warning" style="font-size: 12px;"></i>
+                    <% } %>
                   </div>
                 </div>
               </div>
@@ -986,7 +1038,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=${p.productId}">
+                <a href="product/<%= product.id %>/<%= product.slug %>">
                   <img src="/images2/cate3.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -1012,7 +1064,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=${p.productId}">
+                <a href="product/<%= product.id %>/<%= product.slug %>">
                   <img src="/images2/cate3.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -1038,7 +1090,7 @@
           <div class="card mb-3">
             <div class="row g-0">
               <div class="col-4 d-flex align-items-center">
-                <a href="productDetail?id=${p.productId}">
+                <a href="product/<%= product.id %>/<%= product.slug %>">
                   <img src="/images2/cate3.png" class="img-fluid rounded-start" alt="..." />
                 </a>
               </div>
@@ -1067,7 +1119,7 @@
       <div class="col-md-3 sale text-center">
         <h6 style='color: #c43e3e;'>HOT SALE</h6>
         <h1 style='color: #fff;'><strong>Giảm 37%</strong> trên mỗi hóa đơn</h1>
-        <a href="category?food=Fruits" class="shop-now-btn">
+        <a href="category?type=Wine" class="shop-now-btn">
           <button class="btn btn-light text-success position-relative fw-bold border border-success px-5">
             Mua ngay
             <i class="fas fa-arrow-right position-absolute"></i>

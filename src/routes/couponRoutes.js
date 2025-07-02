@@ -2,6 +2,8 @@ const router = require('express').Router();
 const ctrls = require('@controllers/couponController');
 const tokenUtils = require('@middlewares/jwt');
 
+// [GET] Get a coupon
+router.get('/check', ctrls.getCoupon);  
 // [GET] Get all coupons
 router.get('/', ctrls.getCoupons);
 // [POST] Create new coupon

@@ -36,7 +36,7 @@ const getProductDetailPage = asyncHandler(async (req, res) => {
         product,
         returnTo: req.originalUrl,
         relatedProducts,
-        account: req.user ? { role: req.user.role, ...req.user.toObject() } : null,
+        account: req.user ? { role: req.user.role } : null,
     });
 });
 
