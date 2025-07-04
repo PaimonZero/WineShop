@@ -10,7 +10,8 @@ function changeQuantity(productId, change) {
 
     if (newQuantity >= min && newQuantity <= max) {
         item.quantity = newQuantity;
-        renderCartList(); // cập nhật lại UI
+        renderCartList();
+        renderTotalAmount();
     }
 }
 

@@ -19,13 +19,18 @@ const verifyLogedin = asyncHandler(async (req, res, next) => {
     if (req?.headers?.authorization?.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
     }
+
     // Nếu không có, thử lấy từ cookie
     if (!token && req.cookies?.accessToken) {
         token = req.cookies.accessToken;
     }
+
+    console.log('token', token);
+    
+
     jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            next();
+            return next();
         }
         req.user = decoded; // Attach user info to request object
 
