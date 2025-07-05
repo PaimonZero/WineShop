@@ -11,9 +11,9 @@
           <span class="fw-medium brandSubHeading d-none d-lg-inline-block pacifico-regular">sạch, tươi mỗi ngày</span>
         </a>
 
-        <form action="/customer/category" method="get">
+        <form action="/category" method="get">
           <div class="position-relative ms-4 d-none d-xl-inline-block">
-            <input class="searchInput bg-body-tertiary iconCursor ps-md-5 p-1 p-md-2" type="search" placeholder="Tìm kiếm sản phẩm..." name="textSearch" />
+            <input class="searchInput bg-body-tertiary iconCursor ps-md-5 p-1 p-md-2" type="search" placeholder="Tìm kiếm sản phẩm..." name="s" />
             <img class="position-absolute searchImg iconCursor" src="/images/png/search.svg" alt="search" />
           </div>
         </form>
@@ -62,10 +62,10 @@
         </div>
 
         <!-- Search bên mobile -->
-        <form action="/customer/category" method="get">
+        <form action="/category" method="get">
           <div id="iconContainer" class="d-flex flex-grow-1 justify-content-end justify-content-lg-center align-items-center rounded-5 bg-light d-xl-none">
             <div class="search-box">
-              <input type="text" name="textSearch" class="search-input" placeholder="Sản phẩm,..." />
+              <input type="text" name="s" class="search-input" placeholder="Sản phẩm,..." />
               <button type="submit" class="search-btn">
                 <i class="fas fa-search"></i>
               </button>

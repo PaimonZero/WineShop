@@ -10,6 +10,7 @@ const customerProductDetailRouter = require('@routes/customer/productDetailRoute
 const customerShoppingCartRouter = require('@routes/customer/shoppingCartRoutes');
 const customerCheckOutRouter = require('@routes/customer/checkOutRoutes');
 const customerOrderHistoryRouter = require('@routes/customer/orderHistoryRoutes');
+const customerCategoryRouter = require('@routes/customer/categoryRoutes');
 const customerOrderDetailRouter = require('@routes/customer/orderDetailRoutes');
 
 const { notFound, errorHandler } = require('@middlewares/errorHandler');
@@ -34,6 +35,7 @@ const initRoutes = (app) => {
     app.use('/product', customerProductDetailRouter);
     app.use('/shopping-cart', customerShoppingCartRouter);
     // app.use('/shopping-cart', tokenUtils.verifyAccessToken, customerShoppingCartRouter);
+    app.use('/category', customerCategoryRouter);
     app.use('/check-out', customerCheckOutRouter);
     app.use('/order-history', customerOrderHistoryRouter);
     app.use('/order-detail', customerOrderDetailRouter);

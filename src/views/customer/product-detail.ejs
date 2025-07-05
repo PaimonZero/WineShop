@@ -9,7 +9,7 @@
         <div class="carousel-inner">
           <% product.images.forEach((image, index) => { %>
           <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-            <img src="<%= image %>" class="d-block w-100" alt="Slide <%= index + 1 %>" style="height: 400px;object-fit: contain;" >
+            <img src="<%= image %>" class="d-block w-100" alt="Slide <%= index + 1 %>" style="height: 400px;object-fit: contain;">
           </div>
           <% }); %>
         </div>
@@ -159,7 +159,7 @@
           <p><%= product.title %></p>
         </div>
         <div class="tab-pane fade" id="details" role="tabpanel">
-          <p><%= product.description %></p>
+          <p style="white-space: pre-line;"><%= product.description %></p>
         </div>
         <div class="tab-pane fade" id="reviews" role="tabpanel">
           <p>Good</p>

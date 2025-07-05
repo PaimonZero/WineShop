@@ -49,7 +49,7 @@ button.accordion-button:not(.collapsed) {
     margin-bottom: 15px;
 }
 
-.list-unstyled-cate input[type=radio] {
+.list-unstyled-cate input[type='radio'] {
     width: 7%;
     height: 23px;
     margin-right: 5%;
@@ -61,7 +61,7 @@ button.accordion-button:not(.collapsed) {
     color: #888;
 }
 
-.list-unstyled-cate input[type=range] {
+.list-unstyled-cate input[type='range'] {
     accent-color: green;
 }
 
@@ -90,7 +90,7 @@ button.accordion-button:not(.collapsed) {
     background-color: rgb(54, 157, 54);
 }
 
-.slider input[type="range"] {
+.slider input[type='range'] {
     -webkit-appearance: none;
     width: 100%;
     background: transparent;
@@ -98,7 +98,7 @@ button.accordion-button:not(.collapsed) {
     right: 0;
 }
 
-.slider input[type="range"]::-webkit-slider-thumb {
+.slider input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
     height: 20px;
     width: 20px;
@@ -112,7 +112,7 @@ button.accordion-button:not(.collapsed) {
     z-index: 1;
 }
 
-.slider input[type="range"]::-moz-range-thumb {
+.slider input[type='range']::-moz-range-thumb {
     height: 20px;
     width: 20px;
     border-radius: 50%;
@@ -130,14 +130,18 @@ button.accordion-button:not(.collapsed) {
 
 /* discount banner */
 .discount-banner {
-    background-image: url('../../images/filter1.png');
-    background-size: 100% 300px;
+    background-image: url('https://theme.hstatic.net/200000692767/1001263827/14/section_bannerCus_img_1.jpg?v=2401');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
     height: 300px;
+    object-fit: contain;
+    color: white;
 }
 
 .discount-banner strong {
     font-size: 36px;
-    color: orange;
+    color: red;
 }
 
 .discount-banner h3 {
@@ -271,7 +275,7 @@ button.accordion-button:not(.collapsed) {
 }
 
 .pagination a.current {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
 }
 
