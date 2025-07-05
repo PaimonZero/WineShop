@@ -1,0 +1,137 @@
+<link rel="stylesheet" href="../css/customerCss/checkout.css">
+
+<div class="container">
+  <h3 class="text-center mt-3 fw-bold">Thanh toán</h3>
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card mb-3">
+        <div class="card-body">
+          <form id="invoice-form" action="/check-out/create-invoice" method="POST">
+            <div class="row">
+              <div class="col-lg-8">
+                <h4>Thông tin thanh toán</h4>
+                <hr>
+
+                <div class="form-group mt-2">
+                  <label for="full-name">Họ và tên người nhận</label>
+                  <input type="text" id="full-name" name="fullName" placeholder="Họ và tên" value="<%= userDetails.fullName %>" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="street-address">Địa chỉ nhận</label>
+                  <input type="text" id="street-address" name="address" placeholder="Địa chỉ" value="<%= userDetails.address[0] %>" required>
+                </div>
+
+                <div class="row g-3">
+                  <div class="form-group col-md-6 email-form">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Địa chỉ Email" value="<%= userDetails.email %>" disabled>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="phone">Số điện thoại</label>
+                    <input type="text" id="phone" name="phone" pattern="[0-9]{10}" title="Vui lòng nhập đúng số điện thoại" value="<%= userDetails.mobile %>" required>
+                  </div>
+                </div>
+
+                <!-- <hr>
+                    <div class="add-info">
+                      <h4 class="mb-4">Thông tin bổ sung</h4>
+                      <span>Ghi chú đơn hàng (Tùy chọn)</span><br>
+                      <textarea name="note" placeholder="Ghi chú về đơn hàng của bạn, ví dụ: ghi chú đặc biệt về việc giao hàng, ..."></textarea>
+                    </div> -->
+              </div>
+
+              <!-- PHẦN GIỎ HÀNG + THANH TOÁN -->
+              <div class="col-lg-4">
+                <div class="border p-3 mt-4 mt-lg-0 rounded">
+                  <h4 class="header-title mb-3">Tóm tắt giỏ hàng</h4>
+                  <div class="product-container">
+                    <% cart.forEach(cartItem => { %>
+                    <div class="d-flex align-items-center mb-4">
+                      <img src="<%= cartItem.product.images[0] %>" width="65" height="55" class="rounded me-3 mx-3" />
+
+                      <p class="m-0 d-inline-block align-middle font-16 product-name">
+                        <a href="#" class="text-body" style="font-weight: 500;">
+                          <strong><%= cartItem.product.title %></strong> x<%= cartItem.quantity %>
+                        </a>
+                      </p>
+
+                      <div style="display: none;" class="item-price"><%= cartItem.product.price.toLocaleString('vi-VN') %>đ</div>
+                      <div style="display: none;" class="input-qty"><%= cartItem.quantity %></div>
+
+                      <div style="margin-left: auto; font-weight: bold;" class="item-total-price">
+                        <%= (cartItem.product.price * cartItem.quantity).toLocaleString('vi-VN') %> đ
+                      </div>
+                    </div>
+                    <% }); %>
+                  </div>
+
+                  <div class="table-responsive">
+                    <table class="table mb-0 mt-1">
+                      <tbody>
+                        <tr>
+                          <td>Tổng cộng :</td>
+                          <td style="text-align: right;"><%= total.toLocaleString('vi-VN') %> đ</td>
+                        </tr>
+                        <tr>
+                          <td>Giảm giá :</td>
+                          <td style="text-align: right;">- <%= discount.toLocaleString('vi-VN') %> đ</td>
+                        </tr>
+                        <tr>
+                          <td>Phí vận chuyển :</td>
+                          <td style="text-align: right;">0 đ</td>
+                        </tr>
+                        <tr>
+                          <th>Tổng tiền phải thanh toán :</th>
+                          <th style="text-align: right;"><%= finalTotal.toLocaleString('vi-VN') %> đ</th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="mt-3 payment">
+                    <h5>Hình thức thanh toán</h5>
+                    <div class="d-flex align-items-center mb-2">
+                      <input type="radio" id="cod" name="paymentMethod" value="cash" checked>
+                      <label for="cod">Thanh toán khi nhận hàng</label>
+                    </div>
+                    <!-- Bạn có thể thêm nhiều hình thức thanh toán khác nếu cần -->
+                  </div>
+
+                  <!-- Trường ẩn mã giảm giá nếu có -->
+                  <% if (discountCode) { %>
+                  <input type="hidden" name="discountCode" value="<%= discountCode %>">
+                  <% } %>
+
+                  <button onclick="submitFormPay()" class="process-pay-btn btn w-100 mt-4" <%= cart.length === 0 ? 'disabled' : '' %>>
+                    Đi đến thanh toán
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div> <!-- end card-body-->
+      </div> <!-- end card-->
+    </div> <!-- end col -->
+  </div>
+</div>
+
+<script>
+  const cart = <%- JSON.stringify(cart) %>;
+
+  form.appendChild(input);
+
+  function submitFormPay() {
+    const form = document.getElementById('invoice-form');
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'cart';
+    input.value = JSON.stringify(cart.filter((item) => item.isChecked));
+
+    form.appendChild(input);
+
+    form.submit();
+  }
+</script>

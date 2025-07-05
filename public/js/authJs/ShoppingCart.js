@@ -205,6 +205,26 @@ async function deleteProduct(productId) {
     }
 }
 
+function submitFormPay() {
+    const form = document.getElementById('form-pay');
+    form.innerHTML = ''; // clear old data
+
+    const input1 = document.createElement('input');
+    input1.type = 'hidden';
+    input1.name = 'cart';
+    input1.value = JSON.stringify(cart.filter((item) => item.isChecked));
+
+    const input2 = document.createElement('input');
+    input2.type = 'hidden';
+    input2.name = 'discountCode';
+    input2.value = document.getElementById('coupon-code').value.trim();
+
+    form.appendChild(input1);
+    form.appendChild(input2);
+
+    form.submit();
+}
+
 renderTotalAmount();
 
 renderCartList();

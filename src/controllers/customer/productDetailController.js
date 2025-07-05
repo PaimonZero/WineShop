@@ -29,8 +29,6 @@ const getProductDetailPage = asyncHandler(async (req, res) => {
         })
         .limit(4); // Get up to 4 related products
 
-    console.log(relatedProducts);
-
     res.render('customer/product-detail', {
         title: product.title,
         product,

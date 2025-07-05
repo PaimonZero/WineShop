@@ -8,7 +8,6 @@ const asyncHandler = require('express-async-handler');
  */
 const getShoppingCartPage = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).populate({
-        //req.user._id
         path: 'cart.product',
     });
 
@@ -30,14 +29,16 @@ const getShoppingCartPage = asyncHandler(async (req, res) => {
 
 /**
  * @desc    Delete a product from shopping cart
- * @route   DELETE /cart/delete-product
+ * @route   DELETE /shopping-cart/delete-product
  * @access  Private
  */
 const deleteProductFromCart = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { pid } = req.params;
 
-    const user = await User.findById(_id);
+    const user = await User.findById(_id).populate({
+        path: 'cart.product',
+    });
     const originalLength = user.cart.length;
 
     // Lọc ra các sản phẩm không khớp để giữ lại

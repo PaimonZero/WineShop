@@ -51,40 +51,39 @@
             <div class="col-lg-4">
               <div class="border p-3 mt-4 mt-lg-0 rounded">
                 <h4 class="header-title mb-3">Tổng giá trị giỏ hàng</h4>
-                <form action="checkOut?action=listCart" method="POST">
-                  <div class="table-responsive">
-                    <table class="table mb-0">
-                      <tbody>
-                        <tr>
-                          <td>Khuyến mãi :</td>
-                          <td>
-                            <div id="discount-amount" class="discount-amount" style="text-align: right;">-0 đ</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Tổng cộng :</td>
-                          <td>
-                            <div id="total-amount" class="total-amount" style="text-align: right;">0 đ</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Phí vận chuyển :</td>
-                          <td>
-                            <div class="shipping-amount" style="text-align: right;">-0 đ</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Tổng tiền phải thanh toán :</th>
-                          <th>
-                            <div id="final-total" class="final-total" style="text-align: right;">0 đ</div>
-                          </th>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <button id="btn-pay" type="submit" class="process-pay-btn btn w-100 mt-4">Đi đến thanh
-                      toán</button>
-                  </div>
-                </form>
+                <div class="table-responsive">
+                  <table class="table mb-0">
+                    <tbody>
+                      <tr>
+                        <td>Tổng cộng :</td>
+                        <td>
+                          <div id="total-amount" class="total-amount" style="text-align: right;">0 đ</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Giảm giá :</td>
+                        <td>
+                          <div id="discount-amount" class="discount-amount" style="text-align: right;">-0 đ</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Phí vận chuyển :</td>
+                        <td>
+                          <div class="shipping-amount" style="text-align: right;">-0 đ</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Tổng tiền phải thanh toán :</th>
+                        <th>
+                          <div id="final-total" class="final-total" style="text-align: right;">0 đ</div>
+                        </th>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <button id="btn-pay" onclick="submitFormPay()" class="process-pay-btn btn w-100 mt-4">Đi đến thanh
+                    toán</button>
+                </div>
+                <form id="form-pay" action="check-out" method="POST"> </form>
                 <!-- end table-responsive -->
               </div>
             </div> <!-- end col -->

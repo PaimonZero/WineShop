@@ -24,8 +24,6 @@ const verifyLogedin = asyncHandler(async (req, res, next) => {
     if (!token && req.cookies?.accessToken) {
         token = req.cookies.accessToken;
     }
-
-    console.log('token', token);
     
 
     jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
