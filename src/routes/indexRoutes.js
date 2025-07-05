@@ -9,6 +9,7 @@ const customerHomePageRouter = require('@routes/customer/homePageRoutes');
 const customerProductDetailRouter = require('@routes/customer/productDetailRoutes');
 const customerShoppingCartRouter = require('@routes/customer/shoppingCartRoutes');
 const customerCheckOutRouter = require('@routes/customer/checkOutRoutes');
+const customerOrderHistoryRouter = require('@routes/customer/orderHistoryRoutes');
 
 const { notFound, errorHandler } = require('@middlewares/errorHandler');
 const tokenUtils = require('@middlewares/jwt');
@@ -33,6 +34,7 @@ const initRoutes = (app) => {
     app.use('/shopping-cart', customerShoppingCartRouter);
     // app.use('/shopping-cart', tokenUtils.verifyAccessToken, customerShoppingCartRouter);
     app.use('/check-out', customerCheckOutRouter);
+    app.use('/order-history', customerOrderHistoryRouter);
 
     // handle 404 - This should be the last route
     app.use(notFound);

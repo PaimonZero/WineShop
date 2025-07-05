@@ -1,0 +1,150 @@
+<link rel="stylesheet" href="../css/customerCss/orderHistory.css">
+
+<input type="hidden" id="notifyOrder" name="notifyOrder" value="${notifyOrderSuccess}">
+<div class="mobile-header">
+  <div class="d-flex justify-content-between align-items-center">
+    <button class="menu-toggle btn btn-outline-secondary">
+      <i class="fas fa-bars"></i>Menu
+    </button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row mt-4 mb-4">
+    <div class="col-lg-3 mt-2">
+      <div class="sidebar d-flex flex-column flex-shrink-0 bg-body-tertiary" id="sidebar">
+        <span class="fs-4 p-3" style="font-weight: 500;">Menu</span>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <form id="infoForm1" action="/dashboard?action=listInfo" method="POST">
+              <a class="nav-link" aria-current="page" onclick="document.getElementById('infoForm1').submit();" style="cursor: pointer;">
+                <i class="fas fa-th-large me-2"></i>
+                Bảng điều khiển
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm2" action="/order-history" method="GET">
+              <a class="nav-link active" onclick="document.getElementById('infoForm2').submit();" style="cursor: pointer;">
+                <i class="fas fa-sync-alt me-2"></i>
+                Lịch sử đơn hàng
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm4" action="/shopping-cart" method="GET">
+              <a class="nav-link" onclick="document.getElementById('infoForm4').submit();" style="cursor: pointer;">
+                <i class="bi bi-bag me-2"></i>
+                Giỏ hàng
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm5" action="/account-setting?action=showData" method="POST">
+              <a class="nav-link" onclick="document.getElementById('infoForm5').submit();" style="cursor: pointer;">
+                <i class="bi bi-gear me-2"></i>
+                Cài đặt
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm6" action="/authC?action=logout" method="POST">
+              <a class="nav-link" onclick="document.getElementById('infoForm6').submit();" style="cursor: pointer;">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Đăng xuất
+              </a>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-9 mt-2 mb-3">
+      <!-- Order History -->
+      <div class="card shadow-sm content">
+        <div class="card-body">
+          <h5 class="card-title fw-bold mb-3">Order History</h5>
+          <div class="table-responsive">
+            <table class="table table-borderless table-hover">
+              <thead class="table-active">
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (!invoices || invoices.length === 0) { %>
+                <tr>
+                  <td colspan="5" class="text-center text-danger fw-bold">Lịch sử giỏ hàng đang trống.</td>
+                </tr>
+                <% } else { %>
+                <% invoices.forEach(function(invoice) { %>
+                <tr>
+                  <td>
+                    <img src="<%= invoice.products[0].productId.images[0] %>" alt="product-img" title="<%= invoice.products[0].productId.title %>" class="rounded me-3" height="64" />
+                  </td>
+                  <td class="align-middle"><%= invoice.createdAt.toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }) %></td>
+                  <td class="align-middle"><%= invoice.totalAmount.toLocaleString('vi-VN') %> ₫ (<%= invoice.products.length %> products)</td>
+                  <td class="align-middle">
+                    <span class="badge p-2
+                          <% if (invoice.deliveryStatus === 'pending') { %>bg-warning text-white<% } %>
+                          <% if (invoice.deliveryStatus === 'completed') { %>bg-info text-white<% } %>
+                          <% if (invoice.deliveryStatus === 'shipped') { %>bg-success<% } %>
+                          <% if (invoice.deliveryStatus === 'cancelled') { %>bg-danger<% } %>">
+                      <%= invoice.deliveryStatus %>
+                    </span>
+                  </td>
+                  <td class="align-middle">
+                    <form action="/order-detail" method="GET">
+                      <input type="hidden" name="invoiceId" value="<%= invoice._id %>">
+                      <button type="submit" class="btn p-0 px-2 btn-danger">Xem chi tiết</button>
+                    </form>
+                  </td>
+                </tr>
+                <% }); %>
+                <% } %>
+              </tbody>
+
+            </table>
+          </div>
+
+          <!-- <div class="pagination">
+            <ul class="pagination pagination-sm m-auto mt-3">
+              <c:if test="${pageCount > 1}">
+                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                  <a class="page-link p-2 px-3" href="OrderHistory?page=${currentPage - 1}" tabindex="-1" aria-disabled="${currentPage == 1}">&laquo;</a>
+                </li>
+              </c:if>
+              <c:forEach begin="1" end="${pageCount}" var="i">
+                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                  <a class="page-link p-2 px-3" href="OrderHistory?page=${i}">${i}</a>
+                </li>
+
+              </c:forEach>
+              <c:if test="${pageCount > 1}">
+                <li class="page-item ${currentPage == pageCount ? 'disabled' : ''}">
+                  <a class="page-link p-2 px-3" href="OrderHistory?page=${currentPage + 1}" aria-disabled="${currentPage == pageCount}">&raquo;</a>
+                </li>
+              </c:if>
+            </ul>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  <!-- alert("Đặt hàng thành công, hóa đơn đã được chấp nhận, cùng đón chờ bạn nhé!"); 
+  -->
+</script>
+<script>
+  //hiện thanh sidebar mobile
+  document.querySelector('.menu-toggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('show');
+  });
+</script>
