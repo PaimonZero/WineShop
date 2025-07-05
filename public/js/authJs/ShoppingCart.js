@@ -123,7 +123,7 @@ function renderTotalAmount() {
     // Gán discount amount UI
     const discountEl = document.getElementById('discount-amount');
     if (discountEl) {
-        discountEl.innerText = '-' + discount.toLocaleString('vi-VN') + ' đ';
+        discountEl.innerText = '- ' + discount.toLocaleString('vi-VN') + ' đ';
     }
     // Gán final total UI
     const finalTotalEl = document.getElementById('final-total');

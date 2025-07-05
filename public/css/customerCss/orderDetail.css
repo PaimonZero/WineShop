@@ -291,7 +291,6 @@ td {
   .sidebar {
     position: sticky;
     left: 0;
-    top: 150px;
     height: auto;
     width: 100%;
     transition: none;

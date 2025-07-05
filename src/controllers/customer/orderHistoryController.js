@@ -18,8 +18,6 @@ const getOrderHistoryPage = asyncHandler(async (req, res) => {
         })
         .sort({ createdAt: -1 }); // Sort by creation date, newest first
 
-    console.log(invoices);
-    
 
     res.render('customer/order-history', {
         title: 'Order History',
