@@ -9,7 +9,7 @@
         <div class="carousel-inner">
           <% product.images.forEach((image, index) => { %>
           <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-            <img src="<%= image %>" class="d-block w-100" alt="Slide <%= index + 1 %>">
+            <img src="<%= image %>" class="d-block w-100" alt="Slide <%= index + 1 %>" style="height: 400px;object-fit: contain;" >
           </div>
           <% }); %>
         </div>
@@ -176,7 +176,7 @@
       <div class="col-md-3">
         <div class="card">
           <a href="/product/<%= p._id %>/<%= p.slug %>">
-            <img src="<%= p.images[0] %>" class="card-img-top" alt="<%= p.title %>">
+            <img src="<%= p.images[0] %>" class="card-img-top pt-4" alt="<%= p.title %>" style="height: 100px;object-fit: contain;">
           </a>
           <div class="card-body">
             <h5 class="card-title"><%= p.title %></h5>

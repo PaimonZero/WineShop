@@ -1,97 +1,99 @@
 body {
-  font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 .create-account-section {
-  background-color: #f8f9fa;
+    background-color: #f8f9fa;
 }
 
 .card {
-  border-radius: 10px;
+    border-radius: 10px;
 }
 
 .card-body {
-  padding: 30px;
+    padding: 30px;
 }
 
 /* Sidebar Navigation */
 .nav-link {
-  color: #333;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
 }
 
 .nav-link.active {
-  background-color: #e9f7ef;
-  color: #28a745;
+    background-color: #e9f7ef;
+    color: #28a745;
 }
 
 .nav-link:hover {
-  background-color: #f0f0f0;
-  color: #28a745;
+    background-color: #f0f0f0;
+    color: #28a745;
 }
 
 /* Order History Table */
-.table-borderless th, .table-borderless td {
-  border: none;
+.table-borderless th,
+.table-borderless td {
+    border: none;
 }
 
 .table-hover tbody tr:hover {
-  background-color: #f9f9f9;
+    background-color: #f9f9f9;
 }
 
 .badge {
-  padding: 5px 10px;
+    padding: 5px 10px;
 }
 
 .badge.bg-warning {
-  background-color: #ffc107;
+    background-color: #ffc107;
 }
 
 .badge.bg-info {
-  background-color: #17a2b8;
+    background-color: #17a2b8;
 }
 
 .badge.bg-success {
-  background-color: #28a745;
+    background-color: #28a745;
 }
 
 /* Pagination */
 .pagination .page-link {
-  color: #28a745;
+    color: #28a745;
 }
 
 .pagination .page-item.active .page-link {
-  background-color: #28a745;
-  border-color: #28a745;
-  color: white;
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
 }
 
 .pagination .page-link:hover {
-  background-color: #e9f7ef;
+    background-color: #e9f7ef;
 }
 
-.edit-btn a{
+.edit-btn a {
     padding: 10px 20px;
 }
 .sidebar li a {
     padding: 15px 19px;
-
 }
 
 .sidebar li a:hover {
-    color: #1DBD3A;
+    color: #1dbd3a;
     background-color: #ddd;
 }
 
-.sidebar a , .content a{
+.sidebar a,
+.content a {
     text-decoration: none;
     position: relative;
 }
 
-.sidebar a::after, .content a::after {
+.sidebar a::after,
+.content a::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -104,14 +106,15 @@ body {
 }
 
 .sidebar a:hover::after,
-.sidebar a:focus::after, 
+.sidebar a:focus::after,
 .content a:focus::after,
-.content a:hover::after{
+.content a:hover::after {
     opacity: 1;
     transform: translate3d(0, 0.2em, 0);
 }
 
-.sidebar a::after, .content a::after {
+.sidebar a::after,
+.content a::after {
     opacity: 1;
     transform: scale(0);
     transform-origin: center;
@@ -120,7 +123,7 @@ body {
 .sidebar a:hover::after,
 .sidebar a:focus::after,
 .content a:hover::after,
-.content a:focus::after{
+.content a:focus::after {
     transform: scale(1);
 }
 
@@ -129,11 +132,11 @@ body {
 }
 
 .nav-pills .nav-link.active,
-.nav-pills .show>.nav-link {
+.nav-pills .show > .nav-link {
     color: black;
     background-color: #b3f3a9;
     border-radius: 0px;
-    border-left: 3px solid #1DBD3A;
+    border-left: 3px solid #1dbd3a;
 }
 /* Hidden sidebar in mobile view by default */
 .sidebar {
@@ -225,4 +228,19 @@ body {
     .mobile-content {
         padding-top: 50px;
     }
+}
+
+/* NEW CSS STYLES */
+#cancel-invoice::after {
+    opacity: 0;
+}
+
+.action-icon i {
+    color: red;
+    padding: 10px;
+}
+
+.action-icon i:hover {
+    background-color: #ddd;
+    border-radius: 50%;
 }

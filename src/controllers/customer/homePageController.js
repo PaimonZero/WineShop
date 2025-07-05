@@ -34,8 +34,6 @@ const getCustomerHomePage = asyncHandler(async (req, res) => {
         ratedProducts = [];
     }
 
-    console.log('get customer home page');
-
     res.render('customer/homepage', {
         title: 'WineShop Home Page',
         account: req.user ? { role: req.user.role } : null,

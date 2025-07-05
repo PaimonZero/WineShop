@@ -60,12 +60,32 @@ const createOrder = asyncHandler(async (req, res) => {
 const updatePaymentStatus = asyncHandler(async (req, res) => {
     const { oid } = req.params;
     const { paymentStatus } = req.body;
-    if (!['pending', 'paid', 'failed'].includes(paymentStatus)) {
+    if (!['pending', 'shipped', 'completed', 'cancelled'].includes(paymentStatus)) {
         return res.status(400).json({ message: 'Invalid payment status.' });
     }
     const response = await Invoice.findByIdAndUpdate(oid, { paymentStatus }, { new: true });
     res.status(200).json({
         message: response ? 'Payment status updated!' : 'Invoice not found.',
+        invoice: response,
+    });
+});
+
+// [PUT] Update to cancel invoice
+const updateToCancelDeliveryStatus = asyncHandler(async (req, res) => {
+    const { oid } = req.params;
+    const { deliveryStatus } = req.body;
+
+    if ('cancelled' !== deliveryStatus) {
+        return res.status(400).json({ message: 'Invalid delivery status.' });
+    }
+    const response = await Invoice.findByIdAndUpdate(
+        oid,
+        { deliveryStatus },
+        { new: true }
+    ).populate('products.productId');
+
+    res.status(200).json({
+        message: response ? 'Delivery status updated!' : 'Invoice not found.',
         invoice: response,
     });
 });
@@ -78,6 +98,7 @@ const updateDeliveryStatus = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Invalid delivery status.' });
     }
     const response = await Invoice.findByIdAndUpdate(oid, { deliveryStatus }, { new: true });
+
     res.status(200).json({
         message: response ? 'Delivery status updated!' : 'Invoice not found.',
         invoice: response,
@@ -113,7 +134,8 @@ const getInvoices = asyncHandler(async (req, res) => {
 module.exports = {
     createOrder,
     updatePaymentStatus,
+    updateToCancelDeliveryStatus,
     updateDeliveryStatus,
     getUserInvoices,
-    getInvoices
+    getInvoices,
 };

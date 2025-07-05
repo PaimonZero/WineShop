@@ -69,69 +69,20 @@
             <table class="table table-borderless table-hover">
               <thead class="table-active">
                 <tr>
-                  <th>Order ID</th>
+                  <th>Image</th>
                   <th>Date</th>
                   <th>Total</th>
                   <th>Status</th>
                   <th></th>
+                  <th></th>
                 </tr>
               </thead>
-              <tbody>
-                <% if (!invoices || invoices.length === 0) { %>
-                <tr>
-                  <td colspan="5" class="text-center text-danger fw-bold">Lịch sử giỏ hàng đang trống.</td>
-                </tr>
-                <% } else { %>
-                <% invoices.forEach(function(invoice) { %>
-                <tr>
-                  <td>
-                    <img src="<%= invoice.products[0].productId.images[0] %>" alt="product-img" title="<%= invoice.products[0].productId.title %>" class="rounded me-3" height="64" />
-                  </td>
-                  <td class="align-middle"><%= invoice.createdAt.toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }) %></td>
-                  <td class="align-middle"><%= invoice.totalAmount.toLocaleString('vi-VN') %> ₫ (<%= invoice.products.length %> products)</td>
-                  <td class="align-middle">
-                    <span class="badge p-2
-                          <% if (invoice.deliveryStatus === 'pending') { %>bg-warning text-white<% } %>
-                          <% if (invoice.deliveryStatus === 'completed') { %>bg-info text-white<% } %>
-                          <% if (invoice.deliveryStatus === 'shipped') { %>bg-success<% } %>
-                          <% if (invoice.deliveryStatus === 'cancelled') { %>bg-danger<% } %>">
-                      <%= invoice.deliveryStatus %>
-                    </span>
-                  </td>
-                  <td class="align-middle">
-                    <form action="/order-detail" method="GET">
-                      <input type="hidden" name="invoiceId" value="<%= invoice._id %>">
-                      <button type="submit" class="btn p-0 px-2 btn-danger">Xem chi tiết</button>
-                    </form>
-                  </td>
-                </tr>
-                <% }); %>
-                <% } %>
+              <tbody id="invoices-list">
               </tbody>
 
             </table>
           </div>
 
-          <!-- <div class="pagination">
-            <ul class="pagination pagination-sm m-auto mt-3">
-              <c:if test="${pageCount > 1}">
-                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                  <a class="page-link p-2 px-3" href="OrderHistory?page=${currentPage - 1}" tabindex="-1" aria-disabled="${currentPage == 1}">&laquo;</a>
-                </li>
-              </c:if>
-              <c:forEach begin="1" end="${pageCount}" var="i">
-                <li class="page-item ${i == currentPage ? 'active' : ''}">
-                  <a class="page-link p-2 px-3" href="OrderHistory?page=${i}">${i}</a>
-                </li>
-
-              </c:forEach>
-              <c:if test="${pageCount > 1}">
-                <li class="page-item ${currentPage == pageCount ? 'disabled' : ''}">
-                  <a class="page-link p-2 px-3" href="OrderHistory?page=${currentPage + 1}" aria-disabled="${currentPage == pageCount}">&raquo;</a>
-                </li>
-              </c:if>
-            </ul>
-          </div> -->
         </div>
       </div>
     </div>
@@ -139,12 +90,111 @@
 </div>
 
 <script>
-  <!-- alert("Đặt hàng thành công, hóa đơn đã được chấp nhận, cùng đón chờ bạn nhé!"); 
-  -->
+  let invoices = <%- JSON.stringify(invoices) %>;
 </script>
 <script>
   //hiện thanh sidebar mobile
   document.querySelector('.menu-toggle').addEventListener('click', function() {
     document.getElementById('sidebar').classList.toggle('show');
   });
+
+  async function cancelInvoice(invoiceId) {
+    if (!confirm('Bạn có chắc muốn xoá sản phẩm này khỏi giỏ hàng?')) return;
+
+    try {
+      const res = await fetch(`/api/invoice/cancel-invoice/${invoiceId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          deliveryStatus: 'cancelled',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Hiện tại bạn chưa thể hủy hóa đơn này. Vui lòng chờ một lát nữa nhé!');
+      }
+
+      // ✅ Thành công
+      invoices = invoices.map(item => item._id === data.invoice._id ? data.invoice : item);
+      renderinvoicesList();
+    } catch (err) {
+      console.error('❌ Lỗi xoá sản phẩm:', err);
+      showCouponMessage(err.message || 'Xảy ra lỗi khi xoá', 'danger');
+    }
+  }
+
+  function renderinvoicesList() {
+    const invoicesList = document.getElementById('invoices-list');
+    invoicesList.innerHTML = '';
+
+    if (!invoices || invoices.length === 0) {
+      invoicesList.innerHTML = `
+      <tr>
+        <td colspan="6" class="text-center text-danger fw-bold">Lịch sử giỏ hàng đang trống.</td>
+      </tr>
+    `;
+    } else {
+      invoices.forEach(invoice => {
+        const imgSrc = invoice.products?.[0]?.productId?.images?.[0] || '';
+        const imgAlt = invoice.products?.[0]?.productId?.title || 'product-img';
+
+        const createdAt = new Date(invoice.createdAt).toLocaleDateString('vi-VN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric'
+        });
+
+        const totalAmount = invoice.totalAmount.toLocaleString('vi-VN');
+        const productCount = invoice.products?.length || 0;
+
+        let badgeClass = '';
+        switch (invoice.deliveryStatus) {
+          case 'pending':
+            badgeClass = 'bg-warning text-white';
+            break;
+          case 'completed':
+            badgeClass = 'bg-info text-white';
+            break;
+          case 'shipped':
+            badgeClass = 'bg-success';
+            break;
+          case 'cancelled':
+            badgeClass = 'bg-danger';
+            break;
+        }
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+        <td>
+          <img src="${imgSrc}" alt="${imgAlt}" title="${imgAlt}" class="rounded me-3" height="64" style="object-fit: contain;" />
+        </td>
+        <td class="align-middle">${createdAt}</td>
+        <td class="align-middle">${totalAmount} ₫ (${productCount} products)</td>
+        <td class="align-middle">
+          <span class="badge p-2 ${badgeClass}">${invoice.deliveryStatus}</span>
+        </td>
+        <td class="align-middle">
+          <form action="/order-detail" method="GET">
+            <input type="hidden" name="invoiceId" value="${invoice._id}">
+            <button type="submit" class="btn p-0 px-2 btn-danger">Xem chi tiết</button>
+          </form>
+        </td>
+      ` + (invoice.deliveryStatus !== 'cancelled' ?
+          `<td class="align-middle">
+          <a id="cancel-invoice" class="action-icon" onclick="cancelInvoice('${invoice._id}')" style="cursor: pointer;">
+            <i class="far fa-trash-alt me-2" aria-hidden="true"></i>
+          </a>
+        </td>` : '');
+        invoicesList.appendChild(row);
+      });
+    }
+  }
+
+  renderinvoicesList()
 </script>

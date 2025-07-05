@@ -166,7 +166,7 @@
         </div>-->
         <!-- Thanh tiến trình cho trạng thái giao hàng deliveryStatus -->
         <div class="step-wizard">
-          <% const status = invoice.paymentStatus %>
+          <% const status = invoice.deliveryStatus %>
           <ul class="step-wizard-list">
 
             <!-- Step 1: Receive or Cancel -->
@@ -218,7 +218,7 @@
             <tr>
               <td class="d-flex align-items-center">
                 <!-- lưu ý: chỉ lấy tên ảnh, không có đường dẫn -->
-                <img src="<%= product.productId.images[0] %>" alt="<%= product.productId.title %>" class="product-img me-2">
+                <img src="<%= product.productId.images[0] %>" alt="<%= product.productId.title %>" class="product-img me-2" style="object-fit: contain;">
                 <span><%= product.productId.title %></span>
               </td>
               <td class="item-price"><%= product.price.toLocaleString('vi-VN') %>đ</td>
