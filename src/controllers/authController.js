@@ -415,6 +415,43 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     });
 });
 
+// [GET] auth/google Initiate Google OAuth
+const googleLogin = asyncHandler(async (req, res, next) => {
+    // Được định tuyến ở router, nên Passport sẽ xử lý
+    next(); // Chuyển tiếp cho passport.authenticate
+});
+
+// [GET] auth/google/callback Handle OAuth callback
+const googleCallback = asyncHandler(async (req, res) => {
+    // req.user được Passport gán sau khi xác thực thành công
+    if (!req.user) {
+        return res.redirect('/auth/login');
+    }
+
+    // 1. Tạo token
+    const accessToken = tokenUtils.generateAccessToken(req.user._id, req.user.role);
+    const refreshToken = tokenUtils.generateRefreshToken(req.user._id);
+
+    // 2. Cập nhật refreshToken vào DB
+    await User.findByIdAndUpdate(req.user._id, { refreshToken }, { new: true });
+
+    // 3. Gửi cookie
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+    });
+    res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 1 * 60 * 60 * 1000, // 1 giờ
+    });
+
+    // 4. Chuyển hướng về trang chính hoặc dashboard
+    return res.redirect('/');
+});
+
+
 module.exports = {
     register,
     login,
@@ -427,4 +464,6 @@ module.exports = {
     displayRegister,
     displayForgotPassword,
     displayResetPassword,
+    googleLogin,
+    googleCallback,
 };
