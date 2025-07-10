@@ -76,7 +76,7 @@
         <% if (account) { %>
         <form id="infoForm" action="/Dashboard?action=listInfo" method="POST">
           <div class="user-icon" onclick="document.getElementById('infoForm').submit();" style="cursor: pointer">
-            <img src="<%= account.avatar %>" width="40" height="40" style="object-fit: cover; border-radius: 50%" />
+            <img src="<%= account.avatar ? account.avatar : 'https://th.bing.com/th/id/R.183cc3f6afac4052ca3dc8c131438139?rik=kSkS%2bIRSeFTbtQ&pid=ImgRaw&r=0' %>" width="40" height="40" style="object-fit: cover; border-radius: 50%" />
           </div>
         </form>
         <li class="dropdown" id="icon-drop" style="list-style: none">

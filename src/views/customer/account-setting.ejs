@@ -1,0 +1,284 @@
+<link rel="stylesheet" href="/css/customerCss/accountSetting.css">
+
+<% if (typeof passwordErrorMessage !== 'undefined' && passwordErrorMessage) { %>
+<div class="alert alert-danger mt-4" role="alert">
+  <%= passwordErrorMessage %>
+</div>
+<% } else if (typeof passwordSuccessMessage !== 'undefined' && passwordSuccessMessage) { %>
+<div class="alert alert-success mt-4" role="alert">
+  <%= passwordSuccessMessage %>
+</div>
+<% } %>
+
+<div class="mobile-header">
+  <div class="d-flex justify-content-between align-items-center">
+    <button class="menu-toggle btn btn-outline-secondary">
+      <i class="fas fa-bars"></i>Menu
+    </button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row mt-4 mb-4">
+    <div class="col-lg-3 mt-2">
+      <div class="sidebar d-flex flex-column flex-shrink-0 bg-body-tertiary" id="sidebar">
+        <span class="fs-4 p-3" style="font-weight: 500;">Menu</span>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <form id="infoForm1" action="/customer-dashboard" method="GET">
+              <a class="nav-link" aria-current="page" onclick="document.getElementById('infoForm1').submit();" style="cursor: pointer;">
+                <i class="fas fa-th-large me-2"></i>
+                Bảng điều khiển
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm2" action="/order-history" method="GET">
+              <a class="nav-link" onclick="document.getElementById('infoForm2').submit();" style="cursor: pointer;">
+                <i class="fas fa-sync-alt me-2"></i>
+                Lịch sử đơn hàng
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm4" action="/shopping-cart" method="GET">
+              <a class="nav-link" onclick="document.getElementById('infoForm4').submit();" style="cursor: pointer;">
+                <i class="bi bi-bag me-2"></i>
+                Giỏ hàng
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm5" action="/account-setting" method="GET">
+              <a class="nav-link active" onclick="document.getElementById('infoForm5').submit();" style="cursor: pointer;">
+                <i class="bi bi-gear me-2"></i>
+                Cài đặt
+              </a>
+            </form>
+          </li>
+          <li>
+            <form id="infoForm6" action="/authC?action=logout" method="POST">
+              <a class="nav-link" onclick="document.getElementById('infoForm6').submit();" style="cursor: pointer;">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Đăng xuất
+              </a>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <div class="card mt-2">
+        <div class="card-header">
+          <h5 class="card-title">Cài đặt tài khoản</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!--  enctype="multipart/form-data" -->
+            <form action="/account-setting" method="POST">
+              <div class="row">
+                <div class="col-md-6 px-3 desktop-view">
+                  <!--lưu ý cái này cho máy tính -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="lastName" class="form-label">Họ</label>
+                      <input type="text" class="form-control input" id="lastName" placeholder="Họ" name="lastName" pattern="[A-Za-zÀ-ỹ\s]{1,50}" title="Họ chỉ được chứa chữ cái và tối đa 50 ký tự." value="<%= userDetails.lastName %>" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="firstName" class="form-label">Tên</label>
+                      <input type="text" class="form-control input" id="firstName" placeholder="Tên" name="firstName" pattern="[A-Za-zÀ-ỹ\s]{1,50}" title="Tên chỉ được chứa chữ cái và tối đa 50 ký tự." value="<%= userDetails.firstName %>" required>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="exampleFormControlInput3" class="form-label">Email</label>
+                    <input type="email" class="form-control input" id="exampleFormControlInput3" placeholder="Email" name="email" value="<%= userDetails.email %>">
+                  </div>
+                  <div class="mb-3">
+                    <label for="exampleFormControlInput4" class="form-label">Số điện thoại</label>
+                    <input type="text" class="form-control input" id="exampleFormControlInput4" placeholder="Số điện thoại" pattern="[0-9]{10}" title="Vui lòng nhập đúng số điện thoại" name="mobile" value="<%= userDetails.mobile %>" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="address" class="form-label">Địa chỉ nhận hàng</label>
+                    <input type="text" class="form-control input" id="address" placeholder="Đại học FPT Đà Nẵng" name="address" value="<%= userDetails.address[0] %>" required>
+                  </div>
+                  <div>
+                    <button type="submit" class="save-btn" disabled>Lưu thay đổi</button>
+                  </div>
+                </div>
+                <div class="col-md-6 desktop-view ">
+                  <img src="<%= userDetails.avatar %>" alt="Uploaded Image" class="user-img" id="uploaded-image">
+                  <input type="hidden" name="avatarOld" value="<%= userDetails.avatar %>">
+                  <div class="panel">
+                    <div class="button_outer">
+                      <div class="btn_upload">
+                        <!--id="upload-file"-->
+                        <input type="file" id="upload-avatar" class="input" name="file" accept="image/*">
+                        Upload Image
+                      </div>
+                      <div class="processing_bar"></div>
+                      <div class="success_box"></div>
+                    </div>
+                    <div class="error_msg"></div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <!--  enctype="multipart/form-data" -->
+            <form action="/account-setting" method="POST">
+              <div class="col-md-6 mobile-view">
+                <img src="<%= userDetails.avatar %>" alt="Uploaded Image" class="user-img" id="uploaded-image2">
+                <div class="panel">
+                  <div class="button_outer">
+                    <div class="btn_upload">
+                      <input type="file" id="upload-avatar2" class="input" name="file" accept="image/*">
+                      Upload Image
+                    </div>
+                    <div class="processing_bar"></div>
+                    <div class="success_box"></div>
+                  </div>
+                  <div class="error_msg"></div>
+                </div>
+              </div>
+              <div class="col-md-6 mobile-view">
+                <!--cái này cho điện thoại-->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="lastName" class="form-label">Họ</label>
+                    <input type="text" class="form-control input" id="lastName" placeholder="Họ" name="lastName" value="<%= userDetails.lastName %>" pattern="[A-Za-zÀ-ỹ\s]{1,50}" title="Họ chỉ được chứa chữ cái và tối đa 50 ký tự." required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="firstName" class="form-label">Tên</label>
+                    <input type="text" class="form-control input" id="firstName" placeholder="Tên" name="firstName" value="<%= userDetails.firstName %>" pattern="[A-Za-zÀ-ỹ\s]{1,50}" title="Tên chỉ được chứa chữ cái và tối đa 50 ký tự." required>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput3" class="form-label">Email</label>
+                  <input type="email" class="form-control input" id="exampleFormControlInput3" placeholder="Email" value="<%= userDetails.email %>" name="email">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput3" class="form-label">Số điện thoại</label>
+                  <input type="text" class="form-control input" id="exampleFormControlInput4" placeholder="Số điện thoại" pattern="[0-9]{10}" title="Vui lòng nhập đúng số điện thoại" value="<%= userDetails.mobile %>" name="mobile" required>
+                </div>
+                <div class="mb-3">
+                  <label for="address" class="form-label">Địa chỉ nhận hàng</label>
+                  <input type="text" class="form-control input" id="address" placeholder="Đại học FPT Đà Nẵng" value="<%= userDetails.address[0] %>" name="address" required>
+                </div>
+                <div>
+                  <button type="submit" class="save-btn save-btn-mobile" disabled>Lưu thay đổi</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-3 mb-3">
+        <div class="card-header">
+          <h5 class="card-title">Thay đổi mật khẩu</h5>
+        </div>
+        <form action="/account-setting/change-password" method="POST">
+          <div class="card-body">
+            <label for="pass" class="form-label">Mật khẩu hiện tại</label>
+            <div class="position-relative">
+              <input type="password" class="form-control input1" name="oldPassword" placeholder="Mật khẩu hiện tại" id="pass" required>
+
+              <span toggle="#pass" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+            </div>
+            <div class="row g-3 mt-1">
+              <div class="col-md-6">
+                <label for="new-pass" class="form-label">Mật khẩu mới<span class="text-danger"> *</span></label>
+                <div class="position-relative">
+                  <input type="password" class="form-control input1" name="newPassword" id="new-pass" placeholder="Mật khẩu mới" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" title="Mật khẩu phải có ít nhất 8 kí tự và phải chứa cả chữ và số" required>
+                  <span toggle="#new-pass" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                </div>
+                <!-- <p class="text-danger mt-2">*Mật khẩu phải có ít nhất 8 kí tự và phải chứa cả chữ và số</p> -->
+              </div>
+              <div class="col-md-6">
+                <label for="confirm-pass" class="form-label">Xác nhận mật khẩu mới <span class="text-danger"> *</span></label>
+                <div class="position-relative">
+                  <input type="password" class="form-control input1" name="confirmPassword" id="confirm-pass" placeholder="Xác nhận mật khẩu mới">
+                  <span toggle="#confirm-pass" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                </div>
+              </div>
+            </div>
+            <!-- Phần hiển thị lỗi -->
+            <div class="text-danger mt-2" id="password-error" style="display: none;">Mật khẩu xác nhận
+              không
+              trùng khớp!</div>
+            <div>
+              <button type="submit" class="save-btn mt-3" id="save-btn">Lưu thay đổi</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<button onclick="topFunction()" id="myBtn" title="Go to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<!--có thể bị lỗi do dùng jquery 3.3.1-->
+<script src="/js/authJs/accountSetting.js"></script>
+<script>
+  document.getElementById('upload-avatar').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('uploaded-image').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('upload-avatar2').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('uploaded-image2').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('.input');
+    const saveButton = document.querySelector('.save-btn');
+    const saveButtonMobile = document.querySelector('.save-btn-mobile');
+
+    const initialValues = Array.from(inputs).map(input => input.value);
+
+    function checkForChanges() {
+      let isChanged = false;
+
+      inputs.forEach((input, index) => {
+        if (input.value !== initialValues[index]) {
+          isChanged = true;
+        }
+      });
+
+      saveButton.disabled = !isChanged;
+      saveButtonMobile.disabled = !isChanged;
+    }
+
+    inputs.forEach(input => {
+      input.addEventListener('input', checkForChanges);
+    });
+
+    saveButton.disabled = true;
+    saveButtonMobile.disabled = true;
+  });
+
+  <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+  alert("<%= errorMessage %>");
+  <% } else if (typeof successMessage !== 'undefined' && successMessage) { %>
+  alert("<%= successMessage %>");
+  <% } %>
+  
+</script>

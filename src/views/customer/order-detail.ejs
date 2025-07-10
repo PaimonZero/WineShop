@@ -15,7 +15,7 @@
         <span class="fs-4 p-3" style="font-weight: 500;">Menu</span>
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item">
-            <form id="infoForm1" action="dashboard?action=listInfo" method="POST">
+            <form id="infoForm1" action="/customer-dashboard" method="GET">
               <a class="nav-link" aria-current="page" onclick="document.getElementById('infoForm1').submit();" style="cursor: pointer;">
                 <i class="fas fa-th-large me-2"></i>
                 Bảng điều khiển
@@ -39,7 +39,7 @@
             </form>
           </li>
           <li>
-            <form id="infoForm5" action="account-setting?action=showData" method="POST">
+            <form id="infoForm5" action="account-setting" method="GET">
               <a class="nav-link" onclick="document.getElementById('infoForm5').submit();" style="cursor: pointer;">
                 <i class="bi bi-gear me-2"></i>
                 Cài đặt
