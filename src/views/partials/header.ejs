@@ -74,7 +74,7 @@
         </form>
 
         <% if (account) { %>
-        <form id="infoForm" action="/Dashboard?action=listInfo" method="POST">
+        <form id="infoForm" action="/customer-dashboard" method="GET">
           <div class="user-icon" onclick="document.getElementById('infoForm').submit();" style="cursor: pointer">
             <img src="<%= account.avatar ? account.avatar : 'https://th.bing.com/th/id/R.183cc3f6afac4052ca3dc8c131438139?rik=kSkS%2bIRSeFTbtQ&pid=ImgRaw&r=0' %>" width="40" height="40" style="object-fit: cover; border-radius: 50%" />
           </div>
@@ -99,7 +99,7 @@
               </button>
             </form>
             <% } %>
-            <form action="/authC?action=logout" method="POST" class="menu-user">
+            <form action="/auth/logout" method="POST" class="menu-user">
               <button class="menu-button mt-1">
                 <img class="menu-icon" src="/images/png/box-arrow-in-right.svg" alt="logout" />
                 Đăng xuất
@@ -108,7 +108,7 @@
           </div>
         </li>
         <% } else { %>
-        <form action="/authC?action=login" method="POST">
+        <form action="/auth/login" method="POST">
           <button id="loginBtn" class="btn btn-sm m-sm-2 m-1 bg-primary text-white rounded-5 px-sm-3 px-2">
             Login
             <img class="d-none d-lg-inline-block" src="/images/png/box-arrow-in-right.svg" />
