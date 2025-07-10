@@ -8,6 +8,10 @@ const env = require('@src/config/environment');
 const initRoutes = require('@src/routes/indexRoutes');
 const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
+const passport = require('passport');
+const session = require('express-session');
+// Passport.js configuration
+require('@src/config/passport');
 
 const app = express();
 const port = env.PORT;
@@ -19,6 +23,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 // Ghi đè query parser mặc định của Express để parse query strings phức tạp
 app.set('query parser', (str) => qs.parse(str));
+
+// Passport.js setup
+app.use(session({
+    secret: env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Chỉ nên đặt secure: true nếu sử dụng HTTPS
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // EJS setup with layouts
 app.use(expressLayouts);

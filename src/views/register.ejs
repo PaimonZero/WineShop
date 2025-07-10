@@ -1,0 +1,60 @@
+<!-- Nền trang -->
+<style>
+  body {
+    background-color: #f5e6e8; /* Soft rosé wine theme */
+  }
+</style>
+
+<!-- Form Register -->
+<div class="container d-flex justify-content-center align-items-center min-vh-100" style="margin-top: -3rem;">
+  <div class="card shadow p-4" style="max-width: 500px; width: 100%; background-color: rgba(255, 255, 255, 0.9);">
+    <h3 class="text-center mb-3">Sign up</h3>
+
+    <form action="/auth/register" method="POST">
+      <div class="mb-2">
+        <label for="firstName" class="form-label">
+          <i class="fas fa-user text-muted me-1"></i> First Name
+        </label>
+        <input type="text" name="firstName" id="firstName" class="form-control" autocomplete="given-name" required />
+      </div>
+
+      <div class="mb-2">
+        <label for="lastName" class="form-label">
+          <i class="fas fa-user text-muted me-1"></i> Last Name
+        </label>
+        <input type="text" name="lastName" id="lastName" class="form-control" autocomplete="family-name" required />
+      </div>
+
+      <div class="mb-2">
+        <label for="mobile" class="form-label">
+          <i class="fas fa-phone text-muted me-1"></i> Mobile
+        </label>
+        <input type="text" name="mobile" id="mobile" class="form-control" autocomplete="tel" />
+      </div>
+
+      <div class="mb-2">
+        <label for="email" class="form-label">
+          <i class="fas fa-envelope text-muted me-1"></i> Email address
+        </label>
+        <input type="email" name="email" id="email" class="form-control" placeholder="you@example.com" autocomplete="email" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">
+          <i class="fas fa-lock text-muted me-1"></i> Password
+        </label>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Create a password" autocomplete="new-password" required />
+      </div>
+
+      <div class="d-grid mb-2">
+        <button type="submit" class="btn btn-primary">Create Account</button>
+      </div>
+
+      <!-- Link đã có tài khoản -->
+      <div class="text-center">
+        <span>Already have an account?</span>
+        <a href="/auth/login" class="text-decoration-none">Sign in</a>
+      </div>
+    </form>
+  </div>
+</div>
