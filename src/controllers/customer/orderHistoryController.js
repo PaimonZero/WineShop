@@ -18,9 +18,13 @@ const getOrderHistoryPage = asyncHandler(async (req, res) => {
         })
         .sort({ createdAt: -1 }); // Sort by creation date, newest first
 
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('customer/order-history', {
         title: 'Order History',
         account: req.user ? { role: req.user.role } : null,
+        notification: notification || null,
         invoices,
     });
 });

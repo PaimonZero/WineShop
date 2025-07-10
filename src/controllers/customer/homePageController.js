@@ -34,9 +34,13 @@ const getCustomerHomePage = asyncHandler(async (req, res) => {
         ratedProducts = [];
     }
 
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('customer/homepage', {
         title: 'WineShop Home Page',
         account: req.user ? { role: req.user.role } : null,
+        notification: notification || null,
         featuredProducts,
         promotionalProducts,
         sellingProducts,

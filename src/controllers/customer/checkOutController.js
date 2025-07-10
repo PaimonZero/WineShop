@@ -26,6 +26,11 @@ const getCheckoutPage = asyncHandler(async (req, res) => {
 
             if (coupon.expiry && coupon.expiry >= now) {
                 discount = coupon.discount;
+            } else {
+                req.session.notification = {
+                    message: 'Mã giảm giá đã hết hạn.',
+                    type: 'danger',
+                };
             }
         }
     }
@@ -36,9 +41,13 @@ const getCheckoutPage = asyncHandler(async (req, res) => {
 
     const finalTotal = total - discount > 0 ? total - discount : 0;
 
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('customer/check-out', {
         title: 'Checkout',
         account: req.user ? { role: req.user.role } : null,
+        notification: notification || null,
         userDetails,
         cart,
         total,
@@ -68,6 +77,11 @@ const createInvoice = asyncHandler(async (req, res) => {
         if (foundCoupon && foundCoupon.expiry >= new Date()) {
             coupon = foundCoupon._id;
             discount = foundCoupon.discount;
+        } else {
+            req.session.notification = {
+                message: 'Mã giảm giá đã hết hạn.',
+                type: 'danger',
+            };
         }
     }
 
@@ -110,9 +124,14 @@ const createInvoice = asyncHandler(async (req, res) => {
     if (user.cart.length !== originalLength) {
         await user.save();
     }
-    // Trả kết quả
 
-    res.redirect('/');
+    // Trả kết quả
+    req.session.notification = {
+        message: 'Đã đặt hàng thành công! Hãy nhớ thường xuyên theo dõi trạng thái đơn hàng nhé!',
+        type: 'success',
+    };
+
+    res.redirect(`/order-detail?invoiceId=${newInvoice._id}`);
 });
 
 module.exports = {

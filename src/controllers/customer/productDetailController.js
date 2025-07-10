@@ -29,8 +29,12 @@ const getProductDetailPage = asyncHandler(async (req, res) => {
         })
         .limit(4); // Get up to 4 related products
 
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('customer/product-detail', {
         title: product.title,
+        notification: notification || null,
         product,
         returnTo: req.originalUrl,
         relatedProducts,

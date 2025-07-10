@@ -31,7 +31,13 @@ const getCustomerDashboard = asyncHandler(async (req, res) => {
 
     if (!user) {
         // This case should ideally not happen if user is logged in
-        return res.status(404).send('User not found');
+        req.session.notification = {
+            message: 'Email của bạn chưa được đăng ký chăng?',
+            type: 'danger',
+        };
+
+        const backURL = req.get('Referer') || '/';
+        return res.redirect(backURL);
     }
 
     // Calculate total amount spent
@@ -43,14 +49,13 @@ const getCustomerDashboard = asyncHandler(async (req, res) => {
     // Get recent orders (e.g., the latest 5)
     const recentOrders = invoices.slice(0, 5);
 
-    console.log('User:', user);
-    console.log('Invoices:', invoices);
-    console.log('Total Spent:', totalSpent);
-    console.log('Recent Orders:', recentOrders);
+    const notification = req.session.notification;
+    delete req.session.notification;
 
     res.render('customer/customer-dashboard', {
         title: 'Bảng điều khiển',
         account: req.user,
+        notification: notification || null,
         listInfo: user,
         listOrder: invoices,
         recentOrders: recentOrders,

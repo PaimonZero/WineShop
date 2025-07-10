@@ -115,15 +115,16 @@
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Hiện tại bạn chưa thể hủy hóa đơn này. Vui lòng chờ một lát nữa nhé!');
+        alert(data.message || 'Hiện tại bạn chưa thể hủy hóa đơn này. Vui lòng chờ một lát nữa nhé!');
       }
 
       // ✅ Thành công
+      alert('Đã xoá sản phẩm khỏi giỏ hàng thành công!');
       invoices = invoices.map(item => item._id === data.invoice._id ? data.invoice : item);
       renderinvoicesList();
     } catch (err) {
       console.error('❌ Lỗi xoá sản phẩm:', err);
-      showCouponMessage(err.message || 'Xảy ra lỗi khi xoá', 'danger');
+      alert(err.message || 'Xảy ra lỗi khi xoá', 'danger');
     }
   }
 

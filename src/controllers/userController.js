@@ -294,12 +294,12 @@ const updateCart = asyncHandler(async (req, res) => {
         user.cart.push({ product: productId, quantity: qty });
         await user.save();
     }
+
+    req.session.notification = {
+        message: 'Đã thêm sản phẩm vào giỏ hàng thành công!',
+        type: 'success',
+    };
     res.redirect(returnTo);
-    // return res.status(200).json({
-    //     success: true,
-    //     mes: 'Cart updated successfully!',
-    //     cart: user.cart,
-    // });
 });
 
 // [PUT] update cart quantity ( cho button "Increase" và "Decrease" trong trang giỏ hàng )

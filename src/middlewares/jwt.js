@@ -24,7 +24,6 @@ const verifyLogedin = asyncHandler(async (req, res, next) => {
     if (!token && req.cookies?.accessToken) {
         token = req.cookies.accessToken;
     }
-    
 
     jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
         if (err) {
@@ -47,11 +46,20 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
     }
 
     if (!token) {
-        return res.status(401).json({ success: false, mes: 'Require authentication!' });
+        // Set notification vào session
+        req.session.notification = {
+            message: 'Ui! Bạn hãy đăng nhập để tiếp tục nhé!',
+            type: 'danger',
+        };
+
+        const backURL = req.get('Referer') || '/';
+        res.redirect(backURL);
     }
     jwt.verify(token, env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ success: false, mes: 'Invalid access token!' });
+            return res.render('customer/homepage', {
+                notification: { message: 'Invalid access token!', type: 'danger' },
+            });
         }
         req.user = decoded; // Attach user info to request object
 
@@ -61,7 +69,12 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
     if (req.user?.role !== 'admin') {
-        return res.status(403).json({ success: false, mes: 'Access denied!' });
+        return res.render('customer/homepage', {
+            notification: {
+                message: 'Hãy đăng ký ADMIN để được cấp quyền truy cập nhé!',
+                type: 'danger',
+            },
+        });
     }
     next();
 };

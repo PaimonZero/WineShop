@@ -24,9 +24,13 @@ const getOrderDetailPage = asyncHandler(async (req, res) => {
         });
     }
 
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('customer/order-detail', {
         title: `Chi tiết đơn hàng`,
         account: req.user ? { role: req.user.role } : null,
+        notification: notification || null,
         invoice,
     });
 });

@@ -80,12 +80,13 @@ const getCategoryPage = asyncHandler(async (req, res) => {
     // Get all categories for the sidebar filter
     const allCategories = await Category.find().sort({ title: 1 });
 
-    console.log(products);
-    console.log(allCategories);
+    const notification = req.session.notification;
+    delete req.session.notification;
 
     // Render the category page with data
     res.render('customer/category', {
         title: 'Danh mục sản phẩm',
+        notification: notification || null,
         products,
         allCategories,
         totalPages,

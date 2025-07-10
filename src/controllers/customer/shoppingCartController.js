@@ -19,9 +19,13 @@ const getShoppingCartPage = asyncHandler(async (req, res) => {
         subTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
     }
 
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('customer/shopping-cart', {
         title: 'Shopping Cart',
         account: req.user ? { role: req.user.role } : null,
+        notification: notification || null,
         cart,
         subTotal,
     });

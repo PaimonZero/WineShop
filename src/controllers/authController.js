@@ -36,7 +36,8 @@ const register = asyncHandler(async (req, res) => {
         return res.render('register', {
             title: 'Register Page',
             notification: {
-                message: 'Missing required fields!',
+                message:
+                    'Hình như bạn đang nhập thiếu thông tin. Vui lòng kiểm tra: email, mật khẩu, họ tên cũng như số điện thoại nhé!',
                 type: 'danger',
             },
             formData: { email, firstName, lastName, mobile }, // giữ lại input
@@ -50,7 +51,7 @@ const register = asyncHandler(async (req, res) => {
         return res.render('register', {
             title: 'Register Page',
             notification: {
-                message: 'User already exists!',
+                message: 'Email này đã được sử dụng mất rồi! Hãy chọn email khác nhé!',
                 type: 'danger',
             },
             formData: { email, firstName, lastName, mobile },
@@ -71,7 +72,8 @@ const register = asyncHandler(async (req, res) => {
         return res.render('register', {
             title: 'Register Page',
             notification: {
-                message: 'Failed to create user!',
+                message:
+                    'Xin lỗi vì sự bất tiện này! Bạn hãy thử đăng ký tài khoản lại sau ít phút nhé!',
                 type: 'danger',
             },
             formData: { email, firstName, lastName, mobile },
@@ -83,7 +85,7 @@ const register = asyncHandler(async (req, res) => {
     return res.render('login', {
         title: 'Register Page',
         notification: {
-            message: 'User created successfully!',
+            message: 'Chúc mừng bạn đã gia nhập với Barrel&Vine! Hãy đăng nhập để tiếp tục nhé!',
             type: 'success',
         },
         formData: null,
@@ -118,7 +120,7 @@ const login = asyncHandler(async (req, res) => {
     if (!email || !password) {
         return res.render('login', {
             title: 'Login Page',
-            notification: { message: 'Missing email or password!', type: 'danger' },
+            notification: { message: 'Email và mật khẩu không được để trống nhé!', type: 'danger' },
             account: null,
         });
     }
@@ -128,7 +130,7 @@ const login = asyncHandler(async (req, res) => {
     if (!userResponse) {
         return res.render('login', {
             title: 'Login Page',
-            notification: { message: 'User not found!', type: 'danger' },
+            notification: { message: 'Email chưa được đăng ký chăng?', type: 'danger' },
             account: null,
         });
     }
@@ -138,7 +140,7 @@ const login = asyncHandler(async (req, res) => {
     if (!isMatch) {
         return res.render('login', {
             title: 'Login Page',
-            notification: { message: 'Invalid credentials!', type: 'danger' },
+            notification: { message: 'Ui! Nhập sai mật khẩu rồi nhé!', type: 'danger' },
             account: null,
         });
     }
@@ -163,15 +165,13 @@ const login = asyncHandler(async (req, res) => {
     });
 
     // 7. Trả về giao diện thành công
-    return res.render('login', {
-        title: 'Login Page',
-        notification: { message: 'Login successful!', type: 'success' },
-        account: {
-            avatar: userResponse.avatar || '/images/all/default-avatar.jpg',
-            role: userResponse.role,
-            name: userResponse.lastName,
-        },
-    });
+    req.session.notification = {
+        message:
+            'Chào mừng bạn đến với Barrel&Vine! Hãy khám phá thế giới rượu vang cùng mình nhé!',
+        type: 'success',
+    };
+
+    return res.redirect('/');
 });
 
 // [POST] refresh access token
@@ -217,7 +217,7 @@ const logout = asyncHandler(async (req, res) => {
     // });
     return res.render('login', {
         title: 'Login Page',
-        notification: { message: 'Logout successful!', type: 'success' },
+        notification: { message: 'Đăng xuất tài khoản thành công!', type: 'success' },
         account: null,
     });
 });
@@ -244,7 +244,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     if (!email) {
         return res.render('forgot-password', {
             title: 'Forgot Password Page',
-            notification: { message: 'Email is required!', type: 'danger' },
+            notification: { message: 'Bạn cần cung cấp email để tiếp tục nhé!', type: 'danger' },
             account: null,
         });
     }
@@ -253,7 +253,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     if (!user) {
         return res.render('forgot-password', {
             title: 'Forgot Password Page',
-            notification: { message: 'User not found with that email.', type: 'danger' },
+            notification: { message: 'Email chưa được đăng ký chăng?', type: 'danger' },
             account: null,
         });
     }
@@ -274,7 +274,8 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
         return res.render('forgot-password', {
             title: 'Forgot Password Page',
             notification: {
-                message: 'Reset password email sent successfully!',
+                message:
+                    'Email xác thực đặt lại mật khẩu đã được gửi đến email của bạn. Hãy kiếm tra cẩn thận nhé!',
                 type: 'success',
                 messageForForgot: 'Please check your email for the reset link!',
             },
@@ -284,7 +285,8 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
         return res.render('forgot-password', {
             title: 'Forgot Password Page',
             notification: {
-                message: 'Something went wrong. Please try again later.',
+                message:
+                    'Xin lỗi vì sự bất tiện này, đặt lại mật khẩu không thành công. Vui lòng thử lại sau ít phút nhé!',
                 type: 'danger',
             },
             account: null,
@@ -299,7 +301,10 @@ const displayResetPassword = asyncHandler(async (req, res) => {
     if (!token) {
         return res.render('reset-password', {
             title: 'Reset Password Page',
-            notification: { message: 'Token is required!', type: 'danger' },
+            notification: {
+                message: 'Đường link không đúng! Hãy thử yêu cầu đặt mật khẩu lại nhé!',
+                type: 'danger',
+            },
             account: null,
             token: null,
         });
@@ -315,7 +320,10 @@ const displayResetPassword = asyncHandler(async (req, res) => {
         if (!user) {
             return res.render('reset-password', {
                 title: 'Reset Password Page',
-                notification: { message: 'Invalid or expired reset token!', type: 'danger' },
+                notification: {
+                    message: 'Đã quá thời gian rồi, hãy thử yêu cầu đặt lại mật khẩu lại nhé!',
+                    type: 'danger',
+                },
                 account: null,
                 token: null,
             });
@@ -332,7 +340,8 @@ const displayResetPassword = asyncHandler(async (req, res) => {
         return res.status(500).render('reset-password', {
             title: 'Reset Password Page',
             notification: {
-                message: 'Something went wrong. Please try again later.',
+                message:
+                    'Xin lỗi vì sự bất tiện này, đặt lại mật khẩu không thành công. Vui lòng thử lại sau ít phút nhé!',
                 type: 'danger',
             },
             account: null,
@@ -351,7 +360,10 @@ const resetPassword = asyncHandler(async (req, res) => {
     if (!token) {
         return res.render('reset-password', {
             title: 'Reset Password',
-            notification: { message: 'Token is required!', type: 'danger' },
+            notification: {
+                message: 'Link bị hỏng rồi! Hãy thử yêu cầu đặt lại mật khẩu lại nhé!',
+                type: 'danger',
+            },
             token,
             account: null,
         });
@@ -361,7 +373,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     if (!password) {
         return res.render('reset-password', {
             title: 'Reset Password',
-            notification: { message: 'Password is required!', type: 'danger' },
+            notification: { message: 'Ủa bạn quên nhập mật khẩu mới rồi kìa!', type: 'danger' },
             token,
             account: null,
         });
@@ -380,7 +392,10 @@ const resetPassword = asyncHandler(async (req, res) => {
     if (!user) {
         return res.render('reset-password', {
             title: 'Reset Password',
-            notification: { message: 'Invalid or expired reset token!', type: 'danger' },
+            notification: {
+                message: 'Đã quá thời gian rồi, hãy thử yêu cầu đặt lại mật khẩu lại nhé!',
+                type: 'danger',
+            },
             token: null,
             account: null,
         });
@@ -396,7 +411,10 @@ const resetPassword = asyncHandler(async (req, res) => {
     // Trả về thông báo thành công
     return res.render('login', {
         title: 'Reset Password',
-        notification: { message: 'Password reset successfully!', type: 'success' },
+        notification: {
+            message: 'Chúc mừng, bạn đã đặt lại mật khẩu thành công. Bây giờ hãy đăng nhập nhé!',
+            type: 'success',
+        },
         token: null,
         account: null,
     });
@@ -450,7 +468,6 @@ const googleCallback = asyncHandler(async (req, res) => {
     // 4. Chuyển hướng về trang chính hoặc dashboard
     return res.redirect('/');
 });
-
 
 module.exports = {
     register,

@@ -193,15 +193,17 @@ async function deleteProduct(productId) {
         const data = await res.json();
 
         if (!res.ok) {
-            throw new Error(data.message || 'Không thể xoá sản phẩm');
+            alert(data.message || 'Không thể xoá sản phẩm');
         }
+
+        alert(data.message);
 
         // ✅ Thành công
         cart = data.cart;
         renderCartList();
     } catch (err) {
         console.error('❌ Lỗi xoá sản phẩm:', err);
-        showCouponMessage(err.message || 'Xảy ra lỗi khi xoá', 'danger');
+        alert(data.message || 'Không thể xoá sản phẩm');
     }
 }
 
