@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 const env = require('@config/environment');
 const asyncHandler = require('express-async-handler');
 
-const generateAccessToken = (_id, role) => {
-    return jwt.sign({ _id, role }, env.JWT_SECRET, {
+const generateAccessToken = (_id, role, avatar) => {
+    return jwt.sign({ _id, role, avatar }, env.JWT_SECRET, {
         expiresIn: '1h', // Token will expire in 60 minutes
     });
 };

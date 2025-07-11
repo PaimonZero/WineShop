@@ -20,9 +20,12 @@ const displayRegister = asyncHandler(async (req, res) => {
     //     return res.redirect('/admin/dashboard'); // Redirect to admin dashboard if user is an admin
     // }
     // If not logged in, render the register page
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('register', {
         title: 'Register Page',
-        notification: null,
+        notification: notification || null,
         account: null,
     });
 });
@@ -105,9 +108,13 @@ const displayLogin = asyncHandler(async (req, res) => {
     //     return res.redirect('/admin/dashboard'); // Redirect to admin dashboard if user is an admin
     // }
     // If not logged in, render the login page
+
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('login', {
         title: 'Login Page',
-        notification: null,
+        notification: notification || null,
         account: null,
     });
 });
@@ -146,7 +153,11 @@ const login = asyncHandler(async (req, res) => {
     }
 
     // 4. Tạo token
-    const accessToken = tokenUtils.generateAccessToken(userResponse._id, userResponse.role);
+    const accessToken = tokenUtils.generateAccessToken(
+        userResponse._id,
+        userResponse.role,
+        userResponse.avatar
+    );
     const refreshToken = tokenUtils.generateRefreshToken(userResponse._id);
 
     // 5. Lưu refresh token vào DB
@@ -187,7 +198,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     return res.status(200).json({
         success: response ? true : false,
         newAccessToken: response
-            ? tokenUtils.generateAccessToken(response._id, response.role)
+            ? tokenUtils.generateAccessToken(response._id, response.role, response.avatar)
             : 'Refresh token is not valid!',
     });
 });
@@ -229,9 +240,12 @@ const displayForgotPassword = asyncHandler(async (req, res) => {
     //     return res.redirect('/'); // Redirect to home page if user is already logged in
     // }
     // If not logged in, render the forgot password page
+    const notification = req.session.notification;
+    delete req.session.notification;
+
     res.render('forgot-password', {
         title: 'Forgot Password Page',
-        notification: null,
+        notification: notification || null,
         account: null,
     });
 });
@@ -329,9 +343,12 @@ const displayResetPassword = asyncHandler(async (req, res) => {
             });
         }
 
+        const notification = req.session.notification;
+        delete req.session.notification;
+
         return res.render('reset-password', {
             title: 'Reset Password Page',
-            notification: null,
+            notification: notification || null,
             account: null,
             token, // dùng trong form
         });
@@ -447,7 +464,11 @@ const googleCallback = asyncHandler(async (req, res) => {
     }
 
     // 1. Tạo token
-    const accessToken = tokenUtils.generateAccessToken(req.user._id, req.user.role);
+    const accessToken = tokenUtils.generateAccessToken(
+        req.user._id,
+        req.user.role,
+        req.user.avatar
+    );
     const refreshToken = tokenUtils.generateRefreshToken(req.user._id);
 
     // 2. Cập nhật refreshToken vào DB
@@ -466,6 +487,12 @@ const googleCallback = asyncHandler(async (req, res) => {
     });
 
     // 4. Chuyển hướng về trang chính hoặc dashboard
+    req.session.notification = {
+        message:
+            'Chào mừng bạn đến với Barrel&Vine! Hãy khám phá thế giới rượu vang cùng mình nhé!',
+        type: 'success',
+    };
+
     return res.redirect('/');
 });
 

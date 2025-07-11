@@ -39,6 +39,13 @@ var invoiceSchema = new mongoose.Schema(
             phone: { type: String, required: true },
             address: { type: String, required: true },
         },
+
+        // VNPay integration fields
+        vnpTxnRef: {
+            type: String,
+            unique: true,
+            sparse: true,
+        },
     },
     {
         timestamps: true,

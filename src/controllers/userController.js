@@ -66,7 +66,11 @@ const login = asyncHandler(async (req, res) => {
         });
     }
     // Token generation
-    const accessToken = tokenUtils.generateAccessToken(userResponse._id, userResponse.role);
+    const accessToken = tokenUtils.generateAccessToken(
+        userResponse._id,
+        userResponse.role,
+        userResponse.avatar
+    );
     const refreshToken = tokenUtils.generateRefreshToken(userResponse._id);
     // Save refresh token to user
     await User.findByIdAndUpdate(userResponse._id, { refreshToken }, { new: true });
@@ -116,7 +120,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     return res.status(200).json({
         success: response ? true : false,
         newAccessToken: response
-            ? tokenUtils.generateAccessToken(response._id, response.role)
+            ? tokenUtils.generateAccessToken(response._id, response.role, response.avatar)
             : 'Refresh token is not valid!',
     });
 });

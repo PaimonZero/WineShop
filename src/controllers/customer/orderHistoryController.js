@@ -23,7 +23,7 @@ const getOrderHistoryPage = asyncHandler(async (req, res) => {
 
     res.render('customer/order-history', {
         title: 'Order History',
-        account: req.user ? { role: req.user.role } : null,
+        account: req.user || null,
         notification: notification || null,
         invoices,
     });

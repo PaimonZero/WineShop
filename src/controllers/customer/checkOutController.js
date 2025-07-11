@@ -2,10 +2,12 @@ const User = require('@models/User');
 const Invoice = require('@models/Invoice');
 const Coupon = require('@models/Coupon');
 const asyncHandler = require('express-async-handler');
+const moment = require('moment');
+const { createVNPayPaymentUrl, sortObject } = require('@utils/vnpay');
 
 /**
  * @desc    Get checkout page
- * @route   POST /checkout
+ * @route   POST /check-out
  * @access  Private
  */
 const getCheckoutPage = asyncHandler(async (req, res) => {
@@ -46,7 +48,7 @@ const getCheckoutPage = asyncHandler(async (req, res) => {
 
     res.render('customer/check-out', {
         title: 'Checkout',
-        account: req.user ? { role: req.user.role } : null,
+        account: req.user || null,
         notification: notification || null,
         userDetails,
         cart,
@@ -57,6 +59,11 @@ const getCheckoutPage = asyncHandler(async (req, res) => {
     });
 });
 
+/**
+ * @desc    Create a invoice  and return order-detail page
+ * @route   POST /check-out/create-invoice
+ * @access  Private
+ */
 const createInvoice = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { discountCode, fullName, phone, address, paymentMethod } = req.body;
@@ -102,6 +109,8 @@ const createInvoice = asyncHandler(async (req, res) => {
         };
     });
 
+    const orderId = moment().format('DDHHmmss') + Math.floor(Math.random() * 10000);
+
     // Tạo hóa đơn (Invoice)
     const newInvoice = await Invoice.create({
         userId: _id,
@@ -110,6 +119,7 @@ const createInvoice = asyncHandler(async (req, res) => {
         totalAmount: finalTotal,
         paymentMethod,
         shippingAddress: { name: fullName, phone, address },
+        vnpTxnRef: paymentMethod === 'bankTransfer' ? orderId : null,
     });
 
     // Xóa sản phẩm khỏi giỏ hàng
@@ -125,6 +135,12 @@ const createInvoice = asyncHandler(async (req, res) => {
         await user.save();
     }
 
+    // Nếu là thanh toán ngân hàng thì chuyển hướng sang VNPay
+    if (paymentMethod === 'bankTransfer') {
+        const vnpUrl = createVNPayPaymentUrl(req, finalTotal, orderId);
+        return res.redirect(vnpUrl);
+    }
+
     // Trả kết quả
     req.session.notification = {
         message: 'Đã đặt hàng thành công! Hãy nhớ thường xuyên theo dõi trạng thái đơn hàng nhé!',
@@ -134,7 +150,134 @@ const createInvoice = asyncHandler(async (req, res) => {
     res.redirect(`/order-detail?invoiceId=${newInvoice._id}`);
 });
 
+/**
+ * @desc    VNPay IPN callback to update payment status
+ * @route   GET /check-out/vnpay_ipn
+ * @access  Public
+ */
+const handleVNPayIPN = asyncHandler(async (req, res) => {
+    console.log('Handling VNPay IPN...');
+
+    const vnp_Params = req.query;
+    const secureHash = vnp_Params['vnp_SecureHash'];
+
+    const orderId = vnp_Params['vnp_TxnRef'];
+    const rspCode = vnp_Params['vnp_ResponseCode'];
+    const vnpAmount = Number(vnp_Params['vnp_Amount']) / 100;
+
+    delete vnp_Params['vnp_SecureHash'];
+    delete vnp_Params['vnp_SecureHashType'];
+
+    const sortedParams = sortObject(vnp_Params);
+    const signData = qs.stringify(sortedParams, { encode: false });
+    const signed = crypto
+        .createHmac('sha512', process.env.VNP_HASH_SECRET)
+        .update(Buffer.from(signData, 'utf-8'))
+        .digest('hex');
+
+    if (secureHash !== signed) {
+        return res.status(200).json({ RspCode: '97', Message: 'Checksum failed' });
+    }
+
+    const invoice = await Invoice.findOne({ vnpTxnRef: orderId });
+
+    if (!invoice) {
+        return res.status(200).json({ RspCode: '01', Message: 'Order not found' });
+    }
+
+    if (invoice.totalAmount !== vnpAmount) {
+        return res.status(200).json({ RspCode: '04', Message: 'Amount invalid' });
+    }
+
+    if (['paid', 'failed'].includes(invoice.paymentStatus)) {
+        return res.status(200).json({ RspCode: '02', Message: 'Order already updated' });
+    }
+
+    invoice.paymentStatus = rspCode === '00' ? 'paid' : 'failed';
+    await invoice.save();
+
+    return res.status(200).json({ RspCode: '00', Message: 'Payment status updated' });
+});
+
+/**
+ * @desc    VNPay return URL to show payment result to user
+ * @route   GET /check-out/vnpay_return
+ * @access  Public
+ */
+const handleVNPayReturn = asyncHandler(async (req, res) => {
+    const vnp_Params = req.query;
+    const secureHash = vnp_Params['vnp_SecureHash'];
+
+    const orderId = vnp_Params['vnp_TxnRef'];
+    const rspCode = vnp_Params['vnp_ResponseCode'];
+    const vnpAmount = Number(vnp_Params['vnp_Amount']) / 100;
+
+    delete vnp_Params['vnp_SecureHash'];
+    delete vnp_Params['vnp_SecureHashType'];
+
+    const sortedParams = sortObject(vnp_Params);
+    let qs = require('qs');
+    const signData = qs.stringify(sortedParams, { encode: false });
+    let crypto = require('crypto');
+    const signed = crypto
+        .createHmac('sha512', process.env.VNP_HASH_SECRET)
+        .update(Buffer.from(signData, 'utf-8'))
+        .digest('hex');
+
+    if (secureHash !== signed) {
+        req.session.notification = {
+            message: 'Checksum không hợp lệ.',
+            type: 'danger',
+        };
+        return res.redirect(`http://localhost:5000/`);
+    }
+
+    const invoice = await Invoice.findOne({ vnpTxnRef: orderId });
+
+    if (!invoice) {
+        req.session.notification = {
+            message: 'Không tìm thấy đơn hàng tương ứng.',
+            type: 'danger',
+        };
+        return res.redirect(`http://localhost:5000/`);
+    }
+
+    if (invoice.totalAmount !== vnpAmount) {
+        req.session.notification = {
+            message: 'Tổng số tiền không hợp lệ.',
+            type: 'danger',
+        };
+        return res.redirect(`http://localhost:5000/`);
+    }
+
+    if (['paid', 'failed'].includes(invoice.paymentStatus)) {
+        req.session.notification = {
+            message: 'Đơn hàng đã được cập nhật',
+            type: 'danger',
+        };
+        return res.redirect(`http://localhost:5000/`);
+    }
+
+    const success = rspCode === '00';
+
+    invoice.paymentStatus = success ? 'paid' : 'failed';
+    if (!success) invoice.deliveryStatus = 'cancelled';
+
+    await invoice.save();
+
+    req.session.notification = {
+        message: success
+            ? 'Đã đặt hàng thành công! Hãy nhớ thường xuyên theo dõi trạng thái đơn hàng nhé!'
+            : 'Thanh toán thất bại hoặc bị hủy.',
+        type: success ? 'success' : 'danger',
+    };
+
+    return res.redirect(`http://localhost:5000/`);
+});
+
 module.exports = {
     getCheckoutPage,
     createInvoice,
+    handleVNPayIPN,
+    handleVNPayReturn,
 };

@@ -42,7 +42,7 @@ const getCustomerDashboard = asyncHandler(async (req, res) => {
 
     // Calculate total amount spent
     const totalSpent = invoices.reduce(
-        (acc, order) => (order.deliveryStatus === 'cancelled' ? 0 : acc + order.totalAmount),
+        (acc, order) => (order.deliveryStatus === 'cancelled' ? acc : acc + order.totalAmount),
         0
     );
 
@@ -54,7 +54,7 @@ const getCustomerDashboard = asyncHandler(async (req, res) => {
 
     res.render('customer/customer-dashboard', {
         title: 'Bảng điều khiển',
-        account: req.user,
+        account: req.user || null,
         notification: notification || null,
         listInfo: user,
         listOrder: invoices,

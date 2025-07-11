@@ -83,10 +83,10 @@
           <!-- <div class="mt-4">
             <h5>Sản phẩm sales</h5> -->
 
-            <!-- <% products.forEach(function(p) { %> -->
+          <!-- <% products.forEach(function(p) { %> -->
 
 
-            <!-- <a href="/product-detail/<%= p.productId %>/<%= p.slug %>" style="text-decoration: none; color: unset;">
+          <!-- <a href="/product-detail/<%= p.productId %>/<%= p.slug %>" style="text-decoration: none; color: unset;">
               <div class="card mb-3">
                 <div class="row g-0">
                   <div class="col-md-4">
@@ -99,17 +99,17 @@
                       <p class="card-text fw-bold" style="margin: 0;"> -->
 
 
-                        <!-- Giá sau khi giảm -->
-                        <!-- <%= ((p.price * (100 - p.discount)) / 100).toLocaleString('vi-VN') %> ₫
+          <!-- Giá sau khi giảm -->
+          <!-- <%= ((p.price * (100 - p.discount)) / 100).toLocaleString('vi-VN') %> ₫
                         &emsp;&emsp; -->
 
-                        <!-- Giá gốc -->
-                        <!-- <span class="fw-lighter" style="text-decoration: line-through; color: gray; font-size: 14px;"> -->
+          <!-- Giá gốc -->
+          <!-- <span class="fw-lighter" style="text-decoration: line-through; color: gray; font-size: 14px;"> -->
 
-                          <!-- <%= p.price.toLocaleString('vi-VN') %> ₫ -->
+          <!-- <%= p.price.toLocaleString('vi-VN') %> ₫ -->
 
-                          
-                        <!-- </span>
+
+          <!-- </span>
                       </p>
 
                       <div>
@@ -124,7 +124,7 @@
                 </div>
               </div>
             </a> -->
-            <!-- <% }) %> -->
+          <!-- <% }) %> -->
           <!-- </div> -->
 
 
@@ -176,7 +176,7 @@
             </div>
 
             <div class="card-body">
-              <h5 class="card-title fw-bold"><%= product.title %></h5>
+              <h5 class="card-title fw-bold text-multiline-truncate"><%= product.title %></h5>
 
               <div class="row">
                 <div class="col-md-6">
@@ -194,22 +194,38 @@
                   </span>
                   <% } %>
 
-                  <div>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
+                  <% 
+                    const fullStars = Math.floor(product.totalRating); // số sao đầy
+                    const halfStar = product.totalRating % 1 >= 0.5;   // có nửa sao không
+                    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); 
+                  %>
+
+                  <div class="product-rating">
+                    <% for(let i = 0; i < fullStars; i++) { %>
+                    <i class="bi bi-star-fill text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% if (halfStar) { %>
+                    <i class="bi bi-star-half text-warning" style="font-size: 12px;"></i>
+                    <% } %>
+
+                    <% for(let i = 0; i < emptyStars; i++) { %>
+                    <i class="bi bi-star text-warning" style="font-size: 12px;"></i>
+                    <% } %>
                   </div>
                 </div>
 
                 <div class="col-md-6 d-flex align-items-center buy-btn">
-                  <button class="fas fa-shopping-bag openCartBtn"></button>
+                  <a class="d-block w-100" href="product/<%= product.id %>/<%= product.slug %>">
+                    <button class="fas fa-shopping-bag openCartBtn"></button>
+                  </a>
                 </div>
               </div>
 
               <div class="buy-mobile">
-                <button class="btn btn-primary w-100">Mua</button>
+                <a class="d-block w-100" href="product/<%= product.id %>/<%= product.slug %>">
+                  <button class="btn btn-primary w-100">Mua</button>
+                </a>
               </div>
             </div>
           </div>

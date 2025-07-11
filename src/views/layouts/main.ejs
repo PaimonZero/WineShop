@@ -36,6 +36,15 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    .text-multiline-truncate {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      /* 👈 Số dòng muốn hiển thị */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   </style>
 </head>
 

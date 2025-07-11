@@ -81,6 +81,7 @@
                       <h6 class="mt-2">Địa chỉ thanh toán</h6>
                     </div>
                     <div class="card-body">
+                      <p><strong class="text-uppercase"><%= invoice.paymentStatus === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' %></strong></p>
                       <p class="fw-bold"><%= invoice.shippingAddress.name %></p>
                       <p><%= invoice.shippingAddress.address %></p>
                       <!-- <p>Email <br><strong>${email}</strong></p> -->

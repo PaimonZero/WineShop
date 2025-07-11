@@ -47,11 +47,19 @@ const updateAccountSettings = asyncHandler(async (req, res) => {
         return res.redirect(backURL);
     }
 
-    await User.findByIdAndUpdate(
-        _id,
-        { firstName, lastName, email, mobile, address },
-        { new: true, runValidators: true }
-    );
+    const updateFields = {
+        firstName,
+        lastName,
+        email,
+        mobile,
+        address,
+    };
+
+    if (req.file) {
+        updateFields.avatar = req.file.path;
+    }
+
+    await User.findByIdAndUpdate(_id, updateFields, { new: true, runValidators: true });
 
     // Redirect lại trang cài đặt tài khoản sau khi cập nhật thành công
     req.session.notification = {
@@ -79,7 +87,7 @@ const updatePassword = asyncHandler(async (req, res) => {
     const renderWithMsg = (type, message) => {
         res.render('customer/account-setting', {
             title: 'Account Setting',
-            account: req.user ? { role: req.user.role } : null,
+            account: req.user || null,
             userDetails: userDetailsForRender,
             notification: {
                 message,

@@ -97,7 +97,7 @@ const getCategoryPage = asyncHandler(async (req, res) => {
         searchQuery,
         minPrice,
         maxPrice,
-        account: req.user ? { role: req.user.role } : null,
+        account: req.user || null,
     });
 });
 
