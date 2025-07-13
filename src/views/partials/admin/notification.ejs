@@ -1,0 +1,34 @@
+<!-- Notification Toast -->
+<% if (notification && notification.message) { %>
+<div class="notification-toast position-fixed top-0 end-0 p-3" style="z-index: 1080">
+    <div
+        class="toast fade ant-toast shadow d-flex align-items-start bg-<%= notification.type === 'danger' ? 'danger' : notification.type %> text-white border-0 position-relative"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+        <div class="toast-body d-flex flex-column pe-4">
+            <div class="d-flex align-items-center mb-1">
+                <% if (notification.type === 'success') { %>
+                <i class="fas fa-check-circle me-2 fs-5"></i>
+                <% } else if (notification.type === 'danger') { %>
+                <i class="fas fa-times-circle me-2 fs-5"></i>
+                <% } else if (notification.type === 'warning') { %>
+                <i class="fas fa-exclamation-circle me-2 fs-5"></i>
+                <% } else { %>
+                <i class="fas fa-info-circle me-2 fs-5"></i>
+                <% } %>
+                <strong class="me-auto text-capitalize"><%= notification.type %></strong>
+            </div>
+            <div><%= notification.message %></div>
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white position-absolute top-0 end-0 m-2"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+        ></button>
+    </div>
+</div>
+<% } %>

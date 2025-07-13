@@ -1,40 +1,82 @@
-### Các kiểu alert trong Bootstrap
-1. **`alert-primary`**: 
-   - Màu sắc: Xanh dương nhạt.
-   - Ý nghĩa: Dùng cho thông báo chung hoặc thông tin cơ bản.
-   - Ví dụ: "Đây là thông báo cơ bản!"
+---
 
-2. **`alert-secondary`**:
-   - Màu sắc: Xám.
-   - Ý nghĩa: Dùng cho thông báo phụ hoặc ít quan trọng.
-   - Ví dụ: "Thông tin bổ sung."
+## ✅ 1. HTML Loader Overlay (đặt ngay sau `<body>`)
 
-3. **`alert-success`**:
-   - Màu sắc: Xanh lá.
-   - Ý nghĩa: Dùng để biểu thị hành động thành công hoặc hoàn tất.
-   - Ví dụ: "Lưu dữ liệu thành công!"
+```html
+<!-- Fullscreen Loader -->
+<div id="loader-overlay" style="display: none;">
+    <div class="loader-backdrop"></div>
+    <div class="loader-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-2 text-white fw-semibold">Đang xử lý...</div>
+    </div>
+</div>
+```
 
-4. **`alert-danger`**:
-   - Màu sắc: Đỏ.
-   - Ý nghĩa: Dùng cho lỗi hoặc tình huống nguy hiểm.
-   - Ví dụ: "Có lỗi xảy ra, vui lòng thử lại."
+---
 
-5. **`alert-warning`**:
-   - Màu sắc: Vàng.
-   - Ý nghĩa: Dùng để cảnh báo hoặc cần chú ý.
-   - Ví dụ: "Cảnh báo: Dung lượng gần đầy!"
+## ✅ 2. CSS đi kèm (đặt vào file CSS chính hoặc trong `<style>`)
 
-6. **`alert-info`**:
-   - Màu sắc: Xanh lam nhạt.
-   - Ý nghĩa: Dùng cho thông tin bổ sung hoặc hướng dẫn.
-   - Ví dụ: "Vui lòng kiểm tra email để xác nhận."
+```css
+#loader-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-7. **`alert-light`**:
-   - Màu sắc: Trắng nhạt.
-   - Ý nghĩa: Dùng cho thông báo nhẹ nhàng, ít nổi bật.
-   - Ví dụ: "Giao diện đang được cập nhật."
+.loader-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+}
 
-8. **`alert-dark`**:
-   - Màu sắc: Xám đậm.
-   - Ý nghĩa: Dùng cho thông báo cần nhấn mạnh trên nền sáng.
-   - Ví dụ: "Chế độ tối đã được kích hoạt."
+.loader-spinner {
+    z-index: 1;
+    text-align: center;
+}
+```
+
+> ✅ Sử dụng `backdrop-filter` để làm mờ nền + `spinner-border` của Bootstrap để xoay.
+
+---
+
+## ✅ 3. JS sử dụng loader
+
+Khai báo đầu script:
+
+```js
+const loader = document.getElementById('loader-overlay');
+```
+
+Trong form submit:
+
+```js
+if (loader) loader.style.display = 'flex';
+await new Promise(requestAnimationFrame);
+```
+
+Ẩn sau xử lý:
+
+```js
+if (loader) loader.style.display = 'none';
+```
+
+---
+
+## ✅ Kết quả bạn đạt được:
+
+| Tính năng                  | Có |
+| -------------------------- | -- |
+| Che toàn bộ trang          | ✅  |
+| Chặn thao tác người dùng   | ✅  |
+| Có hiệu ứng mờ nền         | ✅  |
+| Spinner Bootstrap đẹp      | ✅  |
+| Thêm dòng chữ "Đang xử lý" | ✅  |
+
+---

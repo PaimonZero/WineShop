@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 require('module-alias/register');
 const qs = require('qs');
 const cors = require('cors');

@@ -1,0 +1,344 @@
+<!-- ============================================================== -->
+<!-- Start Page Content here -->
+<!-- ============================================================== -->
+
+<div class="content">
+
+    <!-- Start Content-->
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Barrel&Vine</a></li>
+                            <li class="breadcrumb-item active">Orders</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">Orders</h4>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-xl-8">
+                                <form
+                                    class="row gy-2 gx-2 align-items-center justify-content-xl-start justify-content-between">
+                                    <div class="col-auto">
+                                        <label for="inputPassword2" class="visually-hidden">Search</label>
+                                        <input type="search" class="form-control" id="inputPassword2"
+                                            placeholder="Search...">
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="d-flex align-items-center">
+                                            <label for="status-select" class="me-2 small fw-bolder">Payment
+                                                Status</label>
+                                            <select class="form-select" id="status-select">
+                                                <option selected>Choose...</option>
+                                                <option value="pending">Pending</option>
+                                                <option value="paid">Paid</option>
+                                                <option value="failed">Failed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="d-flex align-items-center">
+                                            <label for="delivery-status-select" class="me-2 small fw-bolder">Order
+                                                Status</label>
+                                            <select class="form-select" id="delivery-status-select">
+                                                <option selected>Choose...</option>
+                                                <option value="pending">Pending</option>
+                                                <option value="shipped">Shipped</option>
+                                                <option value="completed">Completed</option>
+                                                <option value="cancelled">Cancelled</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="text-xl-end mt-xl-0 mt-2">
+                                    <button type="button" class="btn btn-danger mb-0 me-0"><i
+                                            class="mdi mdi-basket me-1"></i> Add New Order</button>
+                                    <!-- <button type="button" class="btn btn-light mb-2">Export</button> -->
+                                    <!-- <div id="customExportContainer"></div> -->
+                                </div>
+                            </div><!-- end col-->
+                        </div>
+
+                        <div class="table-responsive">
+                            <table id="orders-table" class="table table-centered table-nowrap mb-0">
+                                <%# Thên id vào để sử dụng phân trang %>
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 20px;">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="customCheck1">
+                                                    <label class="form-check-label" for="customCheck1">&nbsp;</label>
+                                                </div>
+                                            </th>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Payment Status</th>
+                                            <th>Total</th>
+                                            <th>Payment Method</th>
+                                            <th>Order Status</th>
+                                            <th style="width: 125px;">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <% invoices.forEach((invoice, index)=> { %>
+                                            <tr data-payment-status="<%= invoice.paymentStatus %>"
+                                                data-delivery-status="<%= invoice.deliveryStatus %>">
+                                                <td>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            id="customCheck<%= index %>">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="d-none">
+                                                        <%= invoice._id.toString() %>
+                                                    </span>
+                                                    <a href="/admin/invoice/<%= invoice._id %>"
+                                                        class="text-body fw-bold">
+                                                        <%= "#" + invoice._id.toString().slice(-6).toUpperCase() %>
+                                                    </a>
+                                                </td>
+                                                <td data-order="<%= new Date(invoice.createdAt).toISOString() %>">
+                                                    <%= new Date(invoice.createdAt).toLocaleDateString('vi-VN') %>
+                                                        <small class="text-muted">
+                                                            <%= new Date(invoice.createdAt).toLocaleTimeString('vi-VN')
+                                                                %>
+                                                        </small>
+                                                </td>
+                                                <td class="fs-4">
+                                                    <span
+                                                        class="badge badge-<%= invoice.paymentStatus === 'paid' ? 'success' : invoice.paymentStatus === 'failed' ? 'danger' : 'warning' %>-lighten">
+                                                        <%= invoice.paymentStatus.charAt(0).toUpperCase() +
+                                                            invoice.paymentStatus.slice(1) %>
+                                                    </span>
+                                                </td>
+                                                <td data-order="<%= invoice.totalAmount %>">
+                                                    <%= invoice.totalAmount.toLocaleString('vi-VN', { style: 'currency'
+                                                        , currency: 'VND' }) %>
+                                                </td>
+                                                <td>
+                                                    <%= invoice.paymentMethod==='cash' ? 'Cash' : 'Bank Transfer' %>
+                                                </td>
+                                                <td class="fs-4">
+                                                    <span
+                                                        class="badge badge-<%= invoice.deliveryStatus === 'completed' ? 'success' : invoice.deliveryStatus === 'shipped' ? 'info' : invoice.deliveryStatus === 'cancelled' ? 'danger' : 'warning' %>-lighten">
+                                                        <%= invoice.deliveryStatus.charAt(0).toUpperCase() +
+                                                            invoice.deliveryStatus.slice(1) %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="/admin/invoice/<%= invoice._id %>" class="action-icon">
+                                                        <i class="mdi mdi-eye"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0);" class="action-icon">
+                                                        <i class="mdi mdi-square-edit-outline"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0);" class="action-icon text-danger">
+                                                        <i class="mdi mdi-delete"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+
+                            </table>
+                        </div>
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+            </div> <!-- end col -->
+        </div>
+        <!-- end row -->
+
+    </div> <!-- container -->
+
+</div> <!-- content -->
+
+<!-- ============================================================== -->
+<!-- End Page content -->
+<!-- ============================================================== -->
+
+<!-- Vendor js -->
+<script src="/assets/js/vendor.min.js"></script>
+
+<!-- ======== Start custom Js for this page ======================= -->
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+<script src="/assets/vendor/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js"></script>
+<!-- Buttons Extension JS -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<!-- JSZip for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("inputPassword2");
+        const statusSelect = document.getElementById("status-select");
+        const tableRows = document.querySelectorAll("table tbody tr");
+        const deliveryStatusSelect = document.getElementById("delivery-status-select");
+
+        function normalizeText(text) {
+            return text.toLowerCase().trim();
+        }
+
+        function filterTable() {
+            const searchValue = normalizeText(searchInput.value);
+            const paymentStatusSelect = document.getElementById("status-select");
+            const deliveryStatusSelect = document.getElementById("delivery-status-select");
+
+            const selectedPayment = paymentStatusSelect.value.toLowerCase();
+            const selectedDelivery = deliveryStatusSelect.value.toLowerCase();
+
+            tableRows.forEach((row) => {
+                const rowText = normalizeText(row.innerText);
+                const paymentStatus = row.getAttribute("data-payment-status")?.toLowerCase() || "";
+                const deliveryStatus = row.getAttribute("data-delivery-status")?.toLowerCase() || "";
+
+                const matchesSearch = rowText.includes(searchValue);
+                const matchesPayment =
+                    selectedPayment === "choose..." || selectedPayment === "" || paymentStatus === selectedPayment;
+                const matchesDelivery =
+                    selectedDelivery === "choose..." || selectedDelivery === "" || deliveryStatus === selectedDelivery;
+
+                if (matchesSearch && matchesPayment && matchesDelivery) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        searchInput.addEventListener("input", filterTable);
+        statusSelect.addEventListener("change", filterTable);
+        deliveryStatusSelect.addEventListener("change", filterTable);
+    });
+</script>
+
+<!-- Custom order js -->
+<script>
+    $(document).ready(function () {
+        'use strict';
+
+        const table = $('#orders-table').DataTable({
+            dom: "<'row align-items-center mb-1'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
+                "rt" +
+                "<'row align-items-center mt-1'<'col-sm-6'i><'col-sm-6'p>>",
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="mdi mdi-file-excel-outline me-1"></i> Export Selected',
+                    className: 'btn btn-light mb-2',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6],
+                        modifier: { selected: true },
+                        format: {
+                            body: function (data, row, columnIndex, node) {
+                                // Nếu là cột Order ID (cột 1)
+                                if (columnIndex === 1) {
+                                    // Tìm phần tử <span class="d-none"> bên trong node
+                                    const hiddenSpan = node.querySelector('span.d-none');
+                                    if (hiddenSpan) {
+                                        return hiddenSpan.textContent.trim(); // Trả về ObjectID
+                                    }
+                                }
+                                // Mặc định: loại bỏ thẻ HTML và chuẩn hóa khoảng trắng
+                                return $(node).text().replace(/\s+/g, ' ').trim();
+                            }
+                        }
+                    }
+                }
+            ],
+            language: {
+                paginate: {
+                    previous: "<i class='mdi mdi-chevron-left'></i>",
+                    next: "<i class='mdi mdi-chevron-right'></i>",
+                },
+                info: 'Showing orders _START_ to _END_ of _TOTAL_',
+                lengthMenu:
+                    'Display <select class="form-select form-select-sm ms-1 me-1">' +
+                    '<option value="5">5</option>' +
+                    '<option value="10">10</option>' +
+                    '<option value="20">20</option>' +
+                    '<option value="-1">All</option>' +
+                    '</select> orders',
+                search: '', // vẫn nên giữ vì nút `search` không hiển thị
+                searchPlaceholder: 'Search...'
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    orderable: false,
+                    className: 'select-checkbox',
+                    checkboxes: {
+                        selectRow: true,
+                        selectAllRender:
+                            '<div class="form-check">' +
+                            '<input type="checkbox" class="form-check-input dt-checkboxes">' +
+                            '<label class="form-check-label">&nbsp;</label>' +
+                            '</div>'
+                    },
+                    render: function (data, type, row, meta) {
+                        return type === 'display'
+                            ? '<div class="form-check">' +
+                            '<input type="checkbox" class="form-check-input dt-checkboxes">' +
+                            '<label class="form-check-label">&nbsp;</label>' +
+                            '</div>'
+                            : data;
+                    }
+                },
+                { targets: -1, orderable: false }
+            ],
+            columns: [
+                null, // Checkbox
+                null, // Order ID
+                null, // Date
+                null, // Payment Status
+                null, // Total
+                null, // Payment Method
+                null, // Order Status
+                null  // Action
+            ],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child'
+            },
+            pageLength: 5,
+            order: [[5, 'asc']],
+            drawCallback: function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                $('#orders-table_length label').addClass('form-label');
+                document.querySelectorAll('.dataTables_wrapper .row .col-md-6').forEach((e) => {
+                    e.classList.add('col-sm-6');
+                    e.classList.remove('col-sm-12', 'col-md-6');
+                });
+            }
+        });
+    });
+</script>
+
+<!-- ======== End custom Js for this page ========================= -->
+
+<!-- App js -->
+<script src="/assets/js/app.min.js"></script>
