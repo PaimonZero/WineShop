@@ -108,7 +108,7 @@
                                                     <span class="d-none">
                                                         <%= invoice._id.toString() %>
                                                     </span>
-                                                    <a href="/admin/invoice/<%= invoice._id %>"
+                                                    <a href="/admin/order-details/<%= invoice._id %>"
                                                         class="text-body fw-bold">
                                                         <%= "#" + invoice._id.toString().slice(-6).toUpperCase() %>
                                                     </a>
@@ -142,7 +142,7 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <a href="/admin/invoice/<%= invoice._id %>" class="action-icon">
+                                                    <a href="/admin/order-details/<%= invoice._id %>" class="action-icon">
                                                         <i class="mdi mdi-eye"></i>
                                                     </a>
                                                     <a href="javascript:void(0);" class="action-icon">

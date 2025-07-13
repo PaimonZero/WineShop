@@ -34,6 +34,7 @@ const renderOrderDetailsPage = asyncHandler(async (req, res) => {
     const invoice = await Invoice.findById(id)
         .populate('userId', 'email mobile lastName firstName')
         .populate('products.productId', 'title')
+        .populate('coupon', 'name discount')
         .lean();
 
     const notification =
@@ -42,7 +43,7 @@ const renderOrderDetailsPage = asyncHandler(async (req, res) => {
             : null;
 
     if (!invoice) {
-        return res.status(404).render('admin/error', {
+        return res.status(404).render('admin/404', {
             title: 'Order Not Found',
             notification: {
                 type: 'danger',
@@ -54,7 +55,7 @@ const renderOrderDetailsPage = asyncHandler(async (req, res) => {
     res.render('admin/orderDetail', {
         title: `Order Details`,
         invoice,
-        notification : notification || {
+        notification: notification || {
             type: 'info',
             message: `You are viewing order ${invoice._id} information!`,
         },
@@ -66,11 +67,15 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { deliveryStatus, paymentStatus } = req.body;
 
+    if (!deliveryStatus || !paymentStatus) {
+        return res.redirect(`/admin/order-details/${id}?type=danger&message=Missing status fields.`);
+    }
+
     if (!['pending', 'shipped', 'completed', 'cancelled'].includes(deliveryStatus)) {
-        return res.redirect(`/admin/orders/${id}?type=danger&message=Invalid delivery status.`);
+        return res.redirect(`/admin/order-details/${id}?type=danger&message=Invalid delivery status.`);
     }
     if (!['pending', 'paid', 'failed'].includes(paymentStatus)) {
-        return res.redirect(`/admin/orders/${id}?type=danger&message=Invalid payment status.`);
+        return res.redirect(`/admin/order-details/${id}?type=danger&message=Invalid payment status.`);
     }
 
     const updatedInvoice = await Invoice.findByIdAndUpdate(
@@ -80,14 +85,10 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     );
 
     if (!updatedInvoice) {
-        return res.redirect(`/admin/orders/${id}?type=danger&message=Order not found.`);
+        return res.redirect(`/admin/order-details/${id}?type=danger&message=Order not found.`);
     }
 
-    // res.status(200).json({
-    //     message: 'Order status updated successfully.',
-    //     invoice: updatedInvoice,
-    // });
-    res.redirect(`/admin/orders/${id}?type=success&message=Order status updated successfully.`);
+    res.redirect(`/admin/order-details/${id}?type=success&message=Order status updated successfully.`);
 });
 
 module.exports = {

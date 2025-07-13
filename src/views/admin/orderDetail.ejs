@@ -18,35 +18,134 @@
                             <li class="breadcrumb-item active">Order Details</li>
                         </ol>
                     </div>
-                    <h4 class="page-title">Order Details</h4>
+                    <h4 class="page-title">Order Details - <%= '#' + invoice._id.toString().slice(-6).toUpperCase() %>
+                    </h4>
                 </div>
             </div>
         </div>
         <!-- end page title -->
 
-        <div class="row justify-content-center">
-            <div class="col-lg-7 col-md-10 col-sm-11">
+        <style>
+            /* Delivery Status */
+    .process-line {
+        height: 2px;
+        background-color: #0acf97;
+        transition: width 0.4s ease;
+    }
+    .process-line.danger {
+        background-color: #fa5c7c;
+    }
+    .progress-0 { width: 0% !important; }
+    .progress-33 { width: 33% !important; }
+    .progress-66 { width: 66% !important; }
+    .progress-100 { width: 100% !important; }
 
-                <div class="horizontal-steps mt-4 mb-4 pb-5" id="tooltip-container">
-                    <div class="horizontal-steps-content">
-                        <div class="step-item">
-                            <span data-bs-container="#tooltip-container" data-bs-toggle="tooltip"
-                                data-bs-placement="bottom" title="20/08/2018 07:24 PM">Order Placed</span>
-                        </div>
-                        <div class="step-item current">
-                            <span data-bs-container="#tooltip-container" data-bs-toggle="tooltip"
-                                data-bs-placement="bottom" title="21/08/2018 11:32 AM">Packed</span>
-                        </div>
-                        <div class="step-item">
-                            <span>Shipped</span>
-                        </div>
-                        <div class="step-item">
-                            <span>Delivered</span>
-                        </div>
-                    </div>
+    .step-item.current span {
+        font-weight: 600;
+        color: #0acf97;
+    }
+    .step-item.completed span {
+        color: #6c757d;
+    }
+    .step-item.text-danger span {
+        color: #fa5c7c;
+    }
 
-                    <div class="process-line" style="width: 33%;"></div>
+    .pay-progress-0 { width: 0% !important; }
+    .pay-progress-50 { width: 50% !important; }
+    .pay-progress-100 { width: 100% !important; }
+</style>
+
+<%
+    const deliveryStatus = invoice.deliveryStatus;
+    let progressClass = 'progress-0';
+
+    if (deliveryStatus === 'cancelled') {
+        progressClass = 'progress-0 danger';
+    } else if (deliveryStatus === 'pending') {
+        progressClass = 'progress-33';
+    } else if (deliveryStatus === 'shipped') {
+        progressClass = 'progress-66';
+    } else if (deliveryStatus === 'completed') {
+        progressClass = 'progress-100';
+    }
+
+    const isStep = (step) => {
+        if (deliveryStatus === step) return 'current';
+        if (step === 'pending' && ['shipped', 'completed'].includes(deliveryStatus)) return 'completed';
+        if (step === 'shipped' && deliveryStatus === 'completed') return 'completed';
+        return '';
+    };
+%>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-10 col-sm-11">
+        <div class="horizontal-steps mt-2 mb-0 pb-5" id="tooltip-container">
+            <div class="horizontal-steps-content">
+                <div class="step-item <%= deliveryStatus === 'cancelled' ? 'current text-danger' : '' %>">
+                    <span data-bs-toggle="tooltip" title="Order Cancelled">Cancelled</span>
                 </div>
+
+                <div class="step-item <%= isStep('pending') %>">
+                    <span data-bs-toggle="tooltip" title="Order Placed">Pending</span>
+                </div>
+
+                <div class="step-item <%= isStep('shipped') %>">
+                    <span data-bs-toggle="tooltip" title="Order Shipped">Shipped</span>
+                </div>
+
+                <div class="step-item <%= isStep('completed') %>">
+                    <span data-bs-toggle="tooltip" title="Order Completed">Completed</span>
+                </div>
+            </div>
+
+            <div class="process-line <%= progressClass %>"></div>
+        </div>
+    </div>
+</div>
+
+                    <!-- end horizontal steps -->
+                     <%
+    const paymentStatus = invoice.paymentStatus;
+    let payProgressClass = 'pay-progress-0';
+
+    if (paymentStatus === 'failed') {
+        payProgressClass = 'pay-progress-0 danger';
+    } else if (paymentStatus === 'pending') {
+        payProgressClass = 'pay-progress-50';
+    } else if (paymentStatus === 'paid') {
+        payProgressClass = 'pay-progress-100';
+    }
+
+    const isPayStep = (step) => {
+        if (paymentStatus === step) return 'current';
+        if (step === 'pending' && paymentStatus === 'paid') return 'completed';
+        return '';
+    };
+%>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-10 col-sm-11">
+        <div class="horizontal-steps mt-0 mb-1 pb-5" id="tooltip-container">
+            <div class="horizontal-steps-content">
+                <div class="step-item <%= paymentStatus === 'failed' ? 'current text-danger' : '' %>">
+                    <span data-bs-toggle="tooltip" title="Payment Failed">Failed</span>
+                </div>
+
+                <div class="step-item <%= isPayStep('pending') %>">
+                    <span data-bs-toggle="tooltip" title="Payment Pending">Pending</span>
+                </div>
+
+                <div class="step-item <%= isPayStep('paid') %>">
+                    <span data-bs-toggle="tooltip" title="Payment Completed">Paid</span>
+                </div>
+            </div>
+
+            <div class="process-line <%= payProgressClass %>"></div>
+        </div>
+    </div>
+</div>
+
             </div>
         </div>
         <!-- end row -->
@@ -56,7 +155,18 @@
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title mb-3">Items from Order #12537</h4>
+                        <div class="row align-items-center mb-1">
+    <div class="col-md-8 col-sm-12">
+        <h4 class="header-title mb-0">
+            Items from Order <%= '#' + invoice._id.toString().slice(-6).toUpperCase() %>
+        </h4>
+    </div>
+    <div class="col-md-4 col-sm-12 text-md-end text-sm-start mt-2 mt-md-0">
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+            <i class="mdi mdi-pencil-outline"></i> Update Status
+        </button>
+    </div>
+</div>
 
                         <div class="table-responsive">
                             <table class="table mb-0">
@@ -69,30 +179,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>The Military Duffle Bag</td>
-                                        <td>3</td>
-                                        <td>$128</td>
-                                        <td>$384</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mountain Basket Ball</td>
-                                        <td>1</td>
-                                        <td>$199</td>
-                                        <td>$199</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Wavex Canvas Messenger Bag</td>
-                                        <td>5</td>
-                                        <td>$180</td>
-                                        <td>$900</td>
-                                    </tr>
-                                    <tr>
-                                        <td>The Utility Shirt</td>
-                                        <td>2</td>
-                                        <td>$79</td>
-                                        <td>$158</td>
-                                    </tr>
+                                    <% invoice.products.forEach(item=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= item.productId?.title || 'Unknown' %>
+                                            </td>
+                                            <td>
+                                                <%= item.quantity %>
+                                            </td>
+                                            <td>
+                                                <%= item.price.toLocaleString('vi-VN', { style: 'currency' ,
+                                                    currency: 'VND' }) %>
+                                            </td>
+                                            <td>
+                                                <%= (item.price * item.quantity).toLocaleString('vi-VN', {
+                                                    style: 'currency' , currency: 'VND' }) %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
                                 </tbody>
                             </table>
                         </div>
@@ -117,22 +221,40 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Grand Total :</td>
-                                        <td>$1641</td>
+                                        <% const grandTotal=invoice.products.reduce((sum, item)=> {
+                                            return sum + (item.price * item.quantity);
+                                            }, 0);
+                                            %>
+                                            <td>Grand Total :</td>
+                                            <td>
+                                                <%= grandTotal.toLocaleString('vi-VN', { style: 'currency' ,
+                                                    currency: 'VND' }) %>
+                                            </td>
                                     </tr>
-                                    <tr>
-                                        <td>Shipping Charge :</td>
-                                        <td>$23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Estimated Tax : </td>
-                                        <td>$19.22</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total :</th>
-                                        <th>$1683.22</th>
-                                    </tr>
+                                    <% if (invoice.coupon) { %>
+                                        <tr>
+                                            <td>Coupon Applied :</td>
+                                            <td>
+                                                <%= invoice.coupon.name || 'Applied' %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Discount :</td>
+                                            <td>
+                                                <%= invoice.coupon.discount.toLocaleString('vi-VN', { style: 'currency'
+                                                    , currency: 'VND' }) %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                            <tr>
+                                                <th>Total :</th>
+                                                <th>
+                                                    <%= invoice.totalAmount.toLocaleString('vi-VN', { style: 'currency'
+                                                        , currency: 'VND' }) %>
+                                                </th>
+                                            </tr>
                                 </tbody>
+
                             </table>
                         </div>
                         <!-- end table-responsive -->
@@ -150,13 +272,16 @@
                     <div class="card-body">
                         <h4 class="header-title mb-3">Shipping Information</h4>
 
-                        <h5>Stanley Jones</h5>
+                        <h5>
+                            <%= invoice.shippingAddress?.name %>
+                        </h5>
 
                         <address class="mb-0 font-14 address-lg">
-                            795 Folsom Ave, Suite 600<br>
-                            San Francisco, CA 94107<br>
-                            <abbr title="Phone">P:</abbr> (123) 456-7890 <br />
-                            <abbr title="Mobile">M:</abbr> (+01) 12345 67890
+                            <%= invoice.shippingAddress?.address %><br />
+                                <abbr title="Phone">P:</abbr>
+                                <%= invoice.shippingAddress?.phone %><br />
+                                    <abbr title="Email">E:</abbr>
+                                    <%= invoice.userId?.email %>
                         </address>
 
                     </div>
@@ -170,10 +295,15 @@
 
                         <ul class="list-unstyled mb-0">
                             <li>
-                                <p class="mb-2"><span class="fw-bold me-2">Payment Type:</span> Credit Card</p>
-                                <p class="mb-2"><span class="fw-bold me-2">Provider:</span> Visa ending in 2851</p>
-                                <p class="mb-2"><span class="fw-bold me-2">Valid Date:</span> 02/2020</p>
-                                <p class="mb-0"><span class="fw-bold me-2">CVV:</span> xxx</p>
+                                <p class="mb-2"><span class="fw-bold me-2">Payment Type:</span>
+                                    <%= invoice.paymentMethod==='cash' ? 'Cash on Delivery' : 'Bank Transfer' %>
+                                </p>
+                                <p class="mb-2"><span class="fw-bold me-2">Payment Status:</span>
+                                    <%= invoice.paymentStatus.charAt(0).toUpperCase() + invoice.paymentStatus.slice(1)
+                                        %>
+                                </p>
+                                <p class="mb-2"><span class="fw-bold me-2">Order account:</span>
+                                    <%= invoice.userId?.email %>
                             </li>
                         </ul>
 
@@ -188,9 +318,16 @@
 
                         <div class="text-center">
                             <i class="mdi mdi-truck-fast h2 text-muted"></i>
-                            <h5><b>UPS Delivery</b></h5>
-                            <p class="mb-1"><b>Order ID :</b> xxxx235</p>
-                            <p class="mb-0"><b>Payment Mode :</b> COD</p>
+                            <h5><b>VNPost Delivery</b></h5>
+                            <p class="mb-1"><b>Order ID :</b>
+                                <%= invoice._id %>
+                            </p>
+                            <p class="mb-0"><b>Delivery Status :</b>
+                                <%= invoice.deliveryStatus.charAt(0).toUpperCase() + invoice.deliveryStatus.slice(1) %>
+                            </p>
+                            <p><b>Created At:</b>
+                                <%= new Date(invoice.createdAt).toLocaleString('vi-VN') %>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -198,6 +335,50 @@
         </div> <!-- end row -->
     </div> <!-- container -->
 </div> <!-- content -->
+
+<!-- Update Status Modal -->
+<div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- modal-lg thêm ở đây -->
+        <form method="POST" action="/admin/order-update/status/<%= invoice._id %>" id="updateStatusForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateStatusModalLabel">Update Order Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Payment Status -->
+                        <div class="mb-3 col-md-6">
+                            <label for="paymentStatus" class="form-label">Payment Status</label>
+                            <select class="form-select" id="paymentStatus" name="paymentStatus" required>
+                                <option value="pending" <%= invoice.paymentStatus === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="paid" <%= invoice.paymentStatus === 'paid' ? 'selected' : '' %>>Paid</option>
+                                <option value="failed" <%= invoice.paymentStatus === 'failed' ? 'selected' : '' %>>Failed</option>
+                            </select>
+                        </div>
+
+                        <!-- Delivery Status -->
+                        <div class="mb-3 col-md-6">
+                            <label for="deliveryStatus" class="form-label">Delivery Status</label>
+                            <select class="form-select" id="deliveryStatus" name="deliveryStatus" required>
+                                <option value="pending" <%= invoice.deliveryStatus === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="shipped" <%= invoice.deliveryStatus === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                <option value="completed" <%= invoice.deliveryStatus === 'completed' ? 'selected' : '' %>>Completed</option>
+                                <option value="cancelled" <%= invoice.deliveryStatus === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- ============================================================== -->
 <!-- End Page content -->
@@ -248,6 +429,21 @@
             toast.remove();
         }, 3500);
     }
+
+    function showLoader() {
+        const loader = document.getElementById('loader-overlay');
+        if (loader) loader.style.display = 'flex';
+    }
+
+    // Gắn sự kiện submit
+    document.addEventListener("DOMContentLoaded", function () {
+        const updateForm = document.getElementById('updateStatusForm');
+        if (updateForm) {
+            updateForm.addEventListener('submit', function () {
+                showLoader(); // Hiện loader khi submit
+            });
+        }
+    });
 </script>
 
 <!-- ======== End custom Js for this page ========================= -->

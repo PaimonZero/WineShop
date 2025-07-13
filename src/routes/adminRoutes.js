@@ -5,6 +5,7 @@ const ctrlsProduct = require('@controllers/admin/productAdmin');
 const ctrlsCategory = require('@controllers/admin/categoryAdmin');
 const ctrlsCoupon = require('@controllers/admin/couponAdmin');
 const ctrlsUser = require('@controllers/admin/userAdmin');
+const ctrlsInvoice = require('@controllers/admin/orderAdmin');
 const asyncHandler = require('express-async-handler');
 
 // test controller
@@ -13,14 +14,20 @@ const Category = require('@models/Category');
 const Coupon = require('@models/Coupon');
 const Invoice = require('@models/Invoice');
 const User = require('@models/User');
+
 const testView = asyncHandler(async (req, res) => {
-    //..............
+    // Dùng để truyền thông báo từ query string giữa các trang
+    // Ví dụ:   const message = encodeURIComponent('Tạo sản phẩm thành công!');
+    //          window.location.href = `/admin/products?type=success&message=${message}`;
+    //          return res.redirect('/admin/dashboard?type=success&message=Test EJS Dashboard');
+    const notification =
+        req.query.type && req.query.message
+            ? { type: req.query.type, message: req.query.message }
+            : null;
+
     res.render('admin/dashboard', {
         title: 'Test EJS Dashboard',
-        notification: {
-            type: 'success',
-            message: 'This is a test notification for the admin dashboard.',
-        },
+        notification
     });
 });
 
@@ -44,8 +51,6 @@ router.use((req, res, next) => {
 
 // Test route to dashboard view
 router.get('/dashboard', testView);
-// Test route to orders view
-router.get('/orders', testOrders);
 
 // ______ Product Management Routes ______
 // Route to view products
@@ -90,5 +95,13 @@ router.get('/users', ctrlsUser.renderUsersPage);
 router.post('/user-create', ctrlsUser.createUser);
 // Route to update user
 router.post('/user-update', ctrlsUser.updateUserInAdminPage);
+
+//______ Order Management Routes ______
+// Route to view orders
+router.get('/orders', ctrlsInvoice.renderOrdersPage);
+// Route to view order details
+router.get('/order-details/:id', ctrlsInvoice.renderOrderDetailsPage);
+// Route to update status
+router.post('/order-update/status/:id', ctrlsInvoice.updateOrderStatus);
 
 module.exports = router;
