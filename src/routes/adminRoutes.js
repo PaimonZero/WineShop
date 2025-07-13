@@ -103,5 +103,9 @@ router.get('/orders', ctrlsInvoice.renderOrdersPage);
 router.get('/order-details/:id', ctrlsInvoice.renderOrderDetailsPage);
 // Route to update status
 router.post('/order-update/status/:id', ctrlsInvoice.updateOrderStatus);
+// Route to delete order
+router.post('/order-delete/:id', ctrlsInvoice.deleteOrder);
+// Route to create order
+router.post('/order-create', ctrlsInvoice.createNewOrder);
 
 module.exports = router;

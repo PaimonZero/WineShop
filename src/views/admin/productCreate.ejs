@@ -37,52 +37,27 @@
                                 <div class="col-xl-6">
                                     <div class="mb-3">
                                         <label class="form-label">Title</label>
-                                        <input
-                                            type="text"
-                                            name="title"
-                                            class="form-control"
-                                            required
-                                        />
+                                        <input type="text" name="title" class="form-control" required />
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Description</label>
-                                        <textarea
-                                            name="description"
-                                            rows="5"
-                                            class="form-control"
-                                            required
-                                        ></textarea>
+                                        <textarea name="description" rows="5" class="form-control" required></textarea>
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Brand</label>
-                                        <input
-                                            type="text"
-                                            name="brand"
-                                            class="form-control"
-                                            required
-                                        />
+                                        <input type="text" name="brand" class="form-control" required />
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Price</label>
-                                        <input
-                                            type="number"
-                                            name="price"
-                                            class="form-control"
-                                            required
-                                        />
+                                        <input type="number" name="price" class="form-control" required />
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Quantity</label>
-                                        <input
-                                            type="number"
-                                            name="quantity"
-                                            class="form-control"
-                                            required
-                                        />
+                                        <input type="number" name="quantity" class="form-control" required />
                                     </div>
 
                                     <div class="mb-3" style="display: none;">
@@ -98,8 +73,10 @@
                                         <label class="form-label">Category</label>
                                         <select name="category" class="form-control">
                                             <% categories.forEach(function(cat) { %>
-                                            <option value="<%= cat._id %>"><%= cat.title %></option>
-                                            <% }) %>
+                                                <option value="<%= cat._id %>">
+                                                    <%= cat.title %>
+                                                </option>
+                                                <% }) %>
                                         </select>
                                     </div>
 
@@ -111,13 +88,8 @@
                                 <div class="col-xl-6">
                                     <div class="mb-3 mt-3 mt-xl-0">
                                         <label class="form-label">Upload Images</label>
-                                        <input
-                                            type="file"
-                                            id="imageInput"
-                                            accept="image/*"
-                                            multiple
-                                            class="form-control"
-                                        />
+                                        <input type="file" id="imageInput" accept="image/*" multiple
+                                            class="form-control" />
 
                                         <!-- Preview container -->
                                         <div id="imagePreview" class="row mt-3"></div>
@@ -194,11 +166,36 @@
         }, 3500);
     }
 
+    const loader = document.getElementById('loader-overlay');
+
+    function showLoader() {
+        // Đặt cờ vào sessionStorage để phân biệt giữa bấm link và dùng Back
+        sessionStorage.setItem('showLoader', 'true');
+        const loader = document.getElementById('loader-overlay');
+        if (loader) loader.style.display = 'flex';
+    }
+
+    function hideLoader() {
+        const loader = document.getElementById('loader-overlay');
+        if (loader) loader.style.display = 'none';
+    }
+
+    // Khi trang được load lại từ nút Back hoặc Reload
+    window.addEventListener('pageshow', function (event) {
+        // Nếu là từ bộ nhớ cache (bấm Back), ẩn loader nếu đang hiện
+        const loader = document.getElementById('loader-overlay');
+        if (event.persisted && loader) {
+            loader.style.display = 'none';
+        }
+
+        // Xóa cờ loader sau khi vào lại trang
+        sessionStorage.removeItem('showLoader');
+    });
+
     // Custom script for uploading and previewing images
     const imageInput = document.getElementById('imageInput');
     const previewContainer = document.getElementById('imagePreview');
     const productForm = document.getElementById('productForm');
-    const loader = document.getElementById('loader-overlay');
 
     let selectedFiles = [];
 
@@ -258,8 +255,8 @@
     productForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        if (loader) loader.style.display = 'flex';
-        await new Promise(requestAnimationFrame);
+        showLoader();
+        await new Promise(requestAnimationFrame); // Cho loader kịp hiển thị
 
         const formData = new FormData(productForm);
         selectedFiles.forEach((file) => formData.append('images', file));
@@ -271,17 +268,17 @@
             });
 
             const result = await res.json();
-            if (loader) loader.style.display = 'none';
 
             if (result.success) {
                 const productId = result.productId;
                 const message = encodeURIComponent('Tạo sản phẩm thành công!');
                 window.location.href = `/admin/product-update/${productId}?type=success&message=${message}`;
             } else {
+                hideLoader();
                 showNotification('danger', result.message || 'Tạo sản phẩm thất bại!');
             }
         } catch (err) {
-            if (preloader) preloader.style.display = 'none';
+            hideLoader();
             console.error(err);
             showNotification('danger', 'Có lỗi xảy ra khi tạo sản phẩm!');
         }

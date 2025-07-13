@@ -29,7 +29,7 @@
                     <div class="card-body">
                         <div class="row mb-2">
                             <div class="col-sm-5">
-                                <a href="/admin/product-create" class="btn btn-danger mb-2"
+                                <a href="/admin/product-create" class="btn btn-danger mb-2" onclick="showLoader()"
                                     ><i class="mdi mdi-plus-circle me-2"></i> Add Products</a
                                 >
                             </div>
@@ -126,7 +126,7 @@
                                         <td class="table-action">
                                             <a
                                                 href="/admin/product-update/<%= product._id %>"
-                                                class="action-icon"
+                                                class="action-icon" onclick="showLoader()"
                                             >
                                                 <i class="mdi mdi-square-edit-outline"></i></a>
                                             <a href="#" class="action-icon text-danger" data-bs-toggle="modal"
@@ -200,8 +200,23 @@
     const loader = document.getElementById('loader-overlay');
 
     function showLoader() {
+        // Đặt cờ vào sessionStorage để phân biệt giữa bấm link và dùng Back
+        sessionStorage.setItem('showLoader', 'true');
+        const loader = document.getElementById('loader-overlay');
         if (loader) loader.style.display = 'flex';
     }
+
+    // Khi trang được load lại từ nút Back hoặc Reload
+    window.addEventListener('pageshow', function (event) {
+        // Nếu là từ bộ nhớ cache (bấm Back), ẩn loader nếu đang hiện
+        const loader = document.getElementById('loader-overlay');
+        if (event.persisted && loader) {
+            loader.style.display = 'none';
+        }
+
+        // Xóa cờ loader sau khi vào lại trang
+        sessionStorage.removeItem('showLoader');
+    });
 
     function prepareDeleteProduct(pid) {
         const form = document.getElementById('deleteCategoryForm');
