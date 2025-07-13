@@ -6,6 +6,7 @@ const ctrlsCategory = require('@controllers/admin/categoryAdmin');
 const ctrlsCoupon = require('@controllers/admin/couponAdmin');
 const ctrlsUser = require('@controllers/admin/userAdmin');
 const ctrlsInvoice = require('@controllers/admin/orderAdmin');
+const ctrlsDashboard = require('@controllers/admin/dashboardAdmin');
 const asyncHandler = require('express-async-handler');
 
 // test controller
@@ -32,7 +33,7 @@ const testView = asyncHandler(async (req, res) => {
 });
 
 const testOrders = asyncHandler(async (req, res) => {
-    const invoices = await Invoice.find()
+    const invoices = await Invoice.find();
     res.render('admin/orders', {
         title: 'Test EJS Orders',
         notification: {
@@ -50,7 +51,10 @@ router.use((req, res, next) => {
 });
 
 // Test route to dashboard view
-router.get('/dashboard', testView);
+router.get('/dashboard', ctrlsDashboard.renderDashboard);
+
+// Test route to orders view
+router.get('/orders', testOrders);
 
 // ______ Product Management Routes ______
 // Route to view products
@@ -62,7 +66,7 @@ router.post('/product-create', uploadCloud.array('images', 10), ctrlsProduct.cre
 // Route to view edit product
 router.get('/product-update/:pid', ctrlsProduct.renderUpdateProductPage);
 // Route to update product
-router.post('/product-update/:pid',  uploadCloud.array('images', 10), ctrlsProduct.updateProduct);
+router.post('/product-update/:pid', uploadCloud.array('images', 10), ctrlsProduct.updateProduct);
 // Route to delete product
 router.post('/product-delete/:pid', ctrlsProduct.deleteProduct);
 // Route to delete product image
