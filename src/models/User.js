@@ -6,7 +6,7 @@ const crypto = require('crypto');
 var userSchema = new mongoose.Schema(
     {
         googleId: { type: String, unique: true },
-        avatar: { type: String, default: 'https://th.bing.com/th/id/R.183cc3f6afac4052ca3dc8c131438139?rik=kSkS%2bIRSeFTbtQ&pid=ImgRaw&r=0' },
+        avatar: { type: String, default: 'https://avatar.iran.liara.run/public/48' },
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
         email: { type: String, required: true, unique: true },

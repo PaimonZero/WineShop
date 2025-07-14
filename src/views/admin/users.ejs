@@ -1,0 +1,429 @@
+<!-- ============================================================== -->
+<!-- Start Page Content here -->
+<!-- ============================================================== -->
+
+<div class="content">
+
+    <!-- Start Content-->
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="/admin/dashboard">Barrel&Vine</a></li>
+                            <li class="breadcrumb-item active">Users</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">Users</h4>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-sm-5">
+                                <a href="javascript:void(0);" class="btn btn-danger mb-2" data-bs-toggle="modal"
+                                    data-bs-target="#addUserModal">
+                                    <i class="mdi mdi-plus-circle me-2"></i> Add Customers
+                                </a>
+                            </div>
+                            <div class="col-sm-7">
+                                <div class="text-sm-end">
+                                    <!-- <button type="button" class="btn btn-light mb-2">Export</button> -->
+                                    <div id="customExportContainer"></div>
+                                </div>
+                            </div><!-- end col-->
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-centered table-striped dt-responsive nowrap w-100"
+                                id="users-datatable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20px;">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="customCheck1">
+                                                <label class="form-check-label" for="customCheck1">&nbsp;</label>
+                                            </div>
+                                        </th>
+                                        <th>Customer</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Create Date</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th style="width: 75px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <% users.forEach((user, index)=> { %>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="customCheck<%= index %>">
+                                                </div>
+                                            </td>
+                                            <td class="table-user">
+                                                <img src="<%= user.avatar %>" alt="table-user"
+                                                    class="me-2 rounded-circle" height="32">
+                                                <a href="#" class="text-body fw-semibold" data-bs-toggle="modal"
+                                                    data-bs-target="#editUserModal" data-user-id="<%= user._id %>"
+                                                    data-user-role="<%= user.role %>"
+                                                    data-user-blocked="<%= user.isBlocked %>">
+                                                    <%= user.firstName + ' ' + user.lastName %>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <%= user.mobile || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= user.email %>
+                                            </td>
+                                            <td data-order="<%= new Date(user.createdAt).getTime() %>">
+                                                <%= new Date(user.createdAt).toLocaleDateString('vi-VN') %>
+                                            </td>
+                                            <td class="fs-4">
+                                                <!-- Display user role with badge -->
+                                                <% if (user.role==='admin' ) { %>
+                                                    <span class="badge bg-primary">Admin</span>
+                                                    <% } else if (user.role==='staff' ) { %>
+                                                        <span class="badge bg-secondary">Staff</span>
+                                                        <% } else { %>
+                                                            <span class="badge bg-success">Customer</span>
+                                                            <% } %>
+                                            </td>
+                                            <td class="fs-4">
+                                                <% if (user.isBlocked) { %>
+                                                    <span class="badge bg-danger">Blocked</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-success">Active</span>
+                                                        <% } %>
+                                            </td>
+                                            <td class="table-action d-flex align-items-center gap-2">
+                                                <!-- Trigger Edit User Modal -->
+                                                <a href="#" class="action-icon" data-bs-toggle="modal"
+                                                    data-bs-target="#editUserModal" data-user-id="<%= user._id %>"
+                                                    data-user-role="<%= user.role %>"
+                                                    data-user-blocked="<%= user.isBlocked %>">
+                                                    <i class="mdi mdi-square-edit-outline"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+            </div> <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div> <!-- container -->
+</div> <!-- content -->
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addUserForm" action="/admin/user-create" method="POST" onsubmit="return validateAddUser()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="firstName" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="lastName" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="mobile" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" id="addPassword" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control"
+                            required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add User</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editUserForm" method="POST" action="/admin/user-update">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Update User Role</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="userId" id="editUserId" />
+                    <div class="mb-3">
+                        <label for="editUserRole" class="form-label">Role</label>
+                        <select class="form-select" name="role" id="editUserRole">
+                            <option value="customer">Customer</option>
+                            <option value="staff">Staff</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserBlocked" class="form-label">Status</label>
+                        <select class="form-select" name="isBlocked" id="editUserBlocked">
+                            <option value="false">Active</option>
+                            <option value="true">Blocked</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- End Page content -->
+<!-- ============================================================== -->
+
+<!-- Vendor js -->
+<script src="/assets/js/vendor.min.js"></script>
+
+<!-- ======== Start custom Js for this page ======================= -->
+<!-- Datatable js -->
+<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+<script src="/assets/vendor/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js"></script>
+<!-- Buttons Extension JS -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<!-- JSZip for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+<!-- Customers js -->
+<script>
+    $(document).ready(function () {
+        'use strict';
+
+        const table = $('#users-datatable').DataTable({
+            dom: "<'row align-items-center mb-2'<'col-sm-6'l><'col-sm-6'f>>" +
+                "rt" +
+                "<'row align-items-center mt-2'<'col-sm-6'i><'col-sm-6'p>>",
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="mdi mdi-file-excel-outline me-1"></i> Export Selected',
+                    className: 'btn btn-light mb-2',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6], // Export Customer Name, Phone, Email, Create Date, Role, Status
+                        modifier: { selected: true },
+                        format: {
+                            body: function (data, row, column, node) {
+                                // Dữ liệu có thể chứa HTML -> loại bỏ thẻ và trim()
+                                const tempDiv = document.createElement("div");
+                                tempDiv.innerHTML = data;
+                                const text = tempDiv.textContent || tempDiv.innerText || "";
+                                return text.trim(); // <-- trim dữ liệu sạch
+                            }
+                        }
+                    }
+                }
+            ],
+            language: {
+                paginate: {
+                    previous: "<i class='mdi mdi-chevron-left'></i>",
+                    next: "<i class='mdi mdi-chevron-right'></i>",
+                },
+                info: 'Showing coupons _START_ to _END_ of _TOTAL_',
+                lengthMenu:
+                    'Display <select class="form-select form-select-sm ms-1 me-1">' +
+                    '<option value="5">5</option>' +
+                    '<option value="10">10</option>' +
+                    '<option value="20">20</option>' +
+                    '<option value="-1">All</option>' +
+                    '</select> coupons',
+                search: '',
+                searchPlaceholder: 'Search...'
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    orderable: false,
+                    className: 'select-checkbox',
+                    checkboxes: {
+                        selectRow: true,
+                        selectAllRender:
+                            '<div class="form-check">' +
+                            '<input type="checkbox" class="form-check-input dt-checkboxes">' +
+                            '<label class="form-check-label">&nbsp;</label>' +
+                            '</div>'
+                    },
+                    render: function (data, type, row, meta) {
+                        return type === 'display'
+                            ? '<div class="form-check">' +
+                            '<input type="checkbox" class="form-check-input dt-checkboxes">' +
+                            '<label class="form-check-label">&nbsp;</label>' +
+                            '</div>'
+                            : data;
+                    }
+                },
+                { targets: -1, orderable: false, className: 'dt-body-right' }
+            ],
+            columns: [
+                null, // 0 Checkbox column
+                null, // 1 Customer Name
+                null, // 2 Phone
+                null, // 3 Email
+                null, // 4 Create Date
+                null, // 5 Role
+                null, // 6 Status
+                null  // 7 Action
+            ],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child'
+            },
+            pageLength: 5,
+            order: [[5, 'asc']],
+            drawCallback: function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                $('#coupons-datatable_length label').addClass('form-label');
+                document.querySelectorAll('.dataTables_wrapper .row .col-md-6').forEach((e) => {
+                    e.classList.add('col-sm-6');
+                    e.classList.remove('col-sm-12', 'col-md-6');
+                });
+            }
+        });
+
+        // Gắn export button ra ngoài bảng
+        table.buttons().container().appendTo('#customExportContainer');
+    });
+
+    // <!-- Notification for display from script -->
+    function showNotification(type = 'info', message = '') {
+        const icon =
+            {
+                success: 'fa-check-circle',
+                danger: 'fa-times-circle',
+                warning: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+            }[type] || 'fa-info-circle';
+
+        const toast = document.createElement('div');
+        toast.className = 'notification-toast position-fixed top-0 end-0 p-3';
+        toast.style.zIndex = '1080';
+        toast.innerHTML = `
+        <div class="toast ant-toast shadow d-flex align-items-start bg-${type} text-white border-0 position-relative show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body d-flex flex-column pe-4">
+                <div class="d-flex align-items-center mb-1">
+                    <i class="fas ${icon} me-2 fs-5"></i>
+                    <strong class="me-auto text-capitalize">${type}</strong>
+                </div>
+                <div>${message}</div>
+            </div>
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+        document.body.appendChild(toast);
+
+        // Tự động xóa sau 3.5s
+        setTimeout(() => {
+            toast.remove();
+        }, 3500);
+    }
+</script>
+
+<script>
+    const loader = document.getElementById('loader-overlay');
+
+    function showLoader() {
+        if (loader) loader.style.display = 'flex';
+    }
+
+    function isValidVietnamesePhone(phone) {
+        // Định dạng: bắt đầu bằng 0, theo sau là 9 chữ số (tổng 10 số)
+        const phoneRegex = /^0\d{9}$/;
+        return phoneRegex.test(phone);
+    }
+
+    function validateAddUser() {
+        const pass = document.getElementById('addPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const phone = document.querySelector('input[name="mobile"]').value;
+
+        // Kiểm tra password khớp
+        if (pass !== confirm) {
+            showNotification('danger', 'Password and confirm password do not match!');
+            return false;
+        }
+
+        // Kiểm tra định dạng số điện thoại nếu có nhập
+        if (phone && !isValidVietnamesePhone(phone)) {
+            showNotification('danger', 'Invalid phone number format! Please enter in the format: 0xxxxxxxxx');
+            return false;
+        }
+
+        // Thêm sự kiện để hiển thị loader khi nhấn tạo user
+        showLoader();
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const editUserModal = document.getElementById('editUserModal');
+        editUserModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            // Lấy data từ thuộc tính data-bs-*
+            const userId = button.getAttribute('data-user-id');
+            const role = button.getAttribute('data-user-role');
+            const isBlocked = button.getAttribute('data-user-blocked');
+
+            // Gán vào form/modal
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUserRole').value = role;
+            document.getElementById('editUserBlocked').value = isBlocked === 'true' ? 'true' : 'false';
+        });
+
+        // Show loader when update form is submitted
+        editUserForm.addEventListener('submit', function () {
+            showLoader();
+        });
+    });
+</script>
+<!-- ======== End custom Js for this page ========================= -->
+
+<!-- App js -->
+<script src="/assets/js/app.min.js"></script>

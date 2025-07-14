@@ -1,0 +1,452 @@
+<!-- ============================================================== -->
+<!-- Start Page Content here -->
+<!-- ============================================================== -->
+
+<div class="content">
+
+    <!-- Start Content-->
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="/admin/dashboard">Barrel&Vine</a></li>
+                            <li class="breadcrumb-item"><a href="/admin/orders">Orders</a></li>
+                            <li class="breadcrumb-item active">Order Details</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">Order Details - <%= '#' + invoice._id.toString().slice(-6).toUpperCase() %>
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <style>
+            /* Delivery Status */
+    .process-line {
+        height: 2px;
+        background-color: #0acf97;
+        transition: width 0.4s ease;
+    }
+    .process-line.danger {
+        background-color: #fa5c7c;
+    }
+    .progress-0 { width: 0% !important; }
+    .progress-33 { width: 33% !important; }
+    .progress-66 { width: 66% !important; }
+    .progress-100 { width: 100% !important; }
+
+    .step-item.current span {
+        font-weight: 600;
+        color: #0acf97;
+    }
+    .step-item.completed span {
+        color: #6c757d;
+    }
+    .step-item.text-danger span {
+        color: #fa5c7c;
+    }
+
+    .pay-progress-0 { width: 0% !important; }
+    .pay-progress-50 { width: 50% !important; }
+    .pay-progress-100 { width: 100% !important; }
+</style>
+
+<%
+    const deliveryStatus = invoice.deliveryStatus;
+    let progressClass = 'progress-0';
+
+    if (deliveryStatus === 'cancelled') {
+        progressClass = 'progress-0 danger';
+    } else if (deliveryStatus === 'pending') {
+        progressClass = 'progress-33';
+    } else if (deliveryStatus === 'shipped') {
+        progressClass = 'progress-66';
+    } else if (deliveryStatus === 'completed') {
+        progressClass = 'progress-100';
+    }
+
+    const isStep = (step) => {
+        if (deliveryStatus === step) return 'current';
+        if (step === 'pending' && ['shipped', 'completed'].includes(deliveryStatus)) return 'completed';
+        if (step === 'shipped' && deliveryStatus === 'completed') return 'completed';
+        return '';
+    };
+%>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-10 col-sm-11">
+        <div class="horizontal-steps mt-2 mb-0 pb-5" id="tooltip-container">
+            <div class="horizontal-steps-content">
+                <div class="step-item <%= deliveryStatus === 'cancelled' ? 'current text-danger' : '' %>">
+                    <span data-bs-toggle="tooltip" title="Order Cancelled">Cancelled</span>
+                </div>
+
+                <div class="step-item <%= isStep('pending') %>">
+                    <span data-bs-toggle="tooltip" title="Order Placed">Pending</span>
+                </div>
+
+                <div class="step-item <%= isStep('shipped') %>">
+                    <span data-bs-toggle="tooltip" title="Order Shipped">Shipped</span>
+                </div>
+
+                <div class="step-item <%= isStep('completed') %>">
+                    <span data-bs-toggle="tooltip" title="Order Completed">Completed</span>
+                </div>
+            </div>
+
+            <div class="process-line <%= progressClass %>"></div>
+        </div>
+    </div>
+</div>
+
+                    <!-- end horizontal steps -->
+                     <%
+    const paymentStatus = invoice.paymentStatus;
+    let payProgressClass = 'pay-progress-0';
+
+    if (paymentStatus === 'failed') {
+        payProgressClass = 'pay-progress-0 danger';
+    } else if (paymentStatus === 'pending') {
+        payProgressClass = 'pay-progress-50';
+    } else if (paymentStatus === 'paid') {
+        payProgressClass = 'pay-progress-100';
+    }
+
+    const isPayStep = (step) => {
+        if (paymentStatus === step) return 'current';
+        if (step === 'pending' && paymentStatus === 'paid') return 'completed';
+        return '';
+    };
+%>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-10 col-sm-11">
+        <div class="horizontal-steps mt-0 mb-1 pb-5" id="tooltip-container">
+            <div class="horizontal-steps-content">
+                <div class="step-item <%= paymentStatus === 'failed' ? 'current text-danger' : '' %>">
+                    <span data-bs-toggle="tooltip" title="Payment Failed">Failed</span>
+                </div>
+
+                <div class="step-item <%= isPayStep('pending') %>">
+                    <span data-bs-toggle="tooltip" title="Payment Pending">Pending</span>
+                </div>
+
+                <div class="step-item <%= isPayStep('paid') %>">
+                    <span data-bs-toggle="tooltip" title="Payment Completed">Paid</span>
+                </div>
+            </div>
+
+            <div class="process-line <%= payProgressClass %>"></div>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <!-- end row -->
+
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center mb-1">
+    <div class="col-md-8 col-sm-12">
+        <h4 class="header-title mb-0">
+            Items from Order <%= '#' + invoice._id.toString().slice(-6).toUpperCase() %>
+        </h4>
+    </div>
+    <div class="col-md-4 col-sm-12 text-md-end text-sm-start mt-2 mt-md-0">
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+            <i class="mdi mdi-pencil-outline"></i> Update Status
+        </button>
+    </div>
+</div>
+
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% invoice.products.forEach(item=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= item.productId?.title || 'Unknown' %>
+                                            </td>
+                                            <td>
+                                                <%= item.quantity %>
+                                            </td>
+                                            <td>
+                                                <%= item.price.toLocaleString('vi-VN', { style: 'currency' ,
+                                                    currency: 'VND' }) %>
+                                            </td>
+                                            <td>
+                                                <%= (item.price * item.quantity).toLocaleString('vi-VN', {
+                                                    style: 'currency' , currency: 'VND' }) %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- end table-responsive -->
+
+                    </div>
+                </div>
+            </div> <!-- end col -->
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mb-3">Order Summary</h4>
+
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <% const grandTotal=invoice.products.reduce((sum, item)=> {
+                                            return sum + (item.price * item.quantity);
+                                            }, 0);
+                                            %>
+                                            <td>Grand Total :</td>
+                                            <td>
+                                                <%= grandTotal.toLocaleString('vi-VN', { style: 'currency' ,
+                                                    currency: 'VND' }) %>
+                                            </td>
+                                    </tr>
+                                    <% if (invoice.coupon) { %>
+                                        <tr>
+                                            <td>Coupon Applied :</td>
+                                            <td>
+                                                <%= invoice.coupon.name || 'Applied' %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Discount :</td>
+                                            <td>
+                                                <%= invoice.coupon.discount.toLocaleString('vi-VN', { style: 'currency'
+                                                    , currency: 'VND' }) %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                            <tr>
+                                                <th>Total :</th>
+                                                <th>
+                                                    <%= invoice.totalAmount.toLocaleString('vi-VN', { style: 'currency'
+                                                        , currency: 'VND' }) %>
+                                                </th>
+                                            </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <!-- end table-responsive -->
+
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div>
+        <!-- end row -->
+
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mb-3">Shipping Information</h4>
+
+                        <h5>
+                            <%= invoice.shippingAddress?.name %>
+                        </h5>
+
+                        <address class="mb-0 font-14 address-lg">
+                            <%= invoice.shippingAddress?.address %><br />
+                                <abbr title="Phone">P:</abbr>
+                                <%= invoice.shippingAddress?.phone %><br />
+                                    <abbr title="Email">E:</abbr>
+                                    <%= invoice.userId?.email %>
+                        </address>
+
+                    </div>
+                </div>
+            </div> <!-- end col -->
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mb-3">Billing Information</h4>
+
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <p class="mb-2"><span class="fw-bold me-2">Payment Type:</span>
+                                    <%= invoice.paymentMethod==='cash' ? 'Cash on Delivery' : 'Bank Transfer' %>
+                                </p>
+                                <p class="mb-2"><span class="fw-bold me-2">Payment Status:</span>
+                                    <%= invoice.paymentStatus.charAt(0).toUpperCase() + invoice.paymentStatus.slice(1)
+                                        %>
+                                </p>
+                                <p class="mb-2"><span class="fw-bold me-2">Order account:</span>
+                                    <%= invoice.userId?.email %>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div> <!-- end col -->
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mb-3">Delivery Info</h4>
+
+                        <div class="text-center">
+                            <i class="mdi mdi-truck-fast h2 text-muted"></i>
+                            <h5><b>VNPost Delivery</b></h5>
+                            <p class="mb-1"><b>Order ID :</b>
+                                <%= invoice._id %>
+                            </p>
+                            <p class="mb-0"><b>Delivery Status :</b>
+                                <%= invoice.deliveryStatus.charAt(0).toUpperCase() + invoice.deliveryStatus.slice(1) %>
+                            </p>
+                            <p><b>Created At:</b>
+                                <%= new Date(invoice.createdAt).toLocaleString('vi-VN') %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+    </div> <!-- container -->
+</div> <!-- content -->
+
+<!-- Update Status Modal -->
+<div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- modal-lg thêm ở đây -->
+        <form method="POST" action="/admin/order-update/status/<%= invoice._id %>" id="updateStatusForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateStatusModalLabel">Update Order Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Payment Status -->
+                        <div class="mb-3 col-md-6">
+                            <label for="paymentStatus" class="form-label">Payment Status</label>
+                            <select class="form-select" id="paymentStatus" name="paymentStatus" required>
+                                <option value="pending" <%= invoice.paymentStatus === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="paid" <%= invoice.paymentStatus === 'paid' ? 'selected' : '' %>>Paid</option>
+                                <option value="failed" <%= invoice.paymentStatus === 'failed' ? 'selected' : '' %>>Failed</option>
+                            </select>
+                        </div>
+
+                        <!-- Delivery Status -->
+                        <div class="mb-3 col-md-6">
+                            <label for="deliveryStatus" class="form-label">Delivery Status</label>
+                            <select class="form-select" id="deliveryStatus" name="deliveryStatus" required>
+                                <option value="pending" <%= invoice.deliveryStatus === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="shipped" <%= invoice.deliveryStatus === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                <option value="completed" <%= invoice.deliveryStatus === 'completed' ? 'selected' : '' %>>Completed</option>
+                                <option value="cancelled" <%= invoice.deliveryStatus === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- End Page content -->
+<!-- ============================================================== -->
+
+<!-- Vendor js -->
+<script src="/assets/js/vendor.min.js"></script>
+
+<!-- ======== Start custom Js for this page ======================= -->
+<!-- Bootstrap Datepicker Plugin js -->
+<script src="/assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<!-- Select2 js  -->
+<script src="/assets/vendor/select2/js/select2.min.js"></script>
+<!-- Dropzone File Upload js -->
+<script src="/assets/vendor/dropzone/min/dropzone.min.js"></script>
+
+<script>
+    // <!-- Notification for display from script -->
+    function showNotification(type = 'info', message = '') {
+        const icon =
+            {
+                success: 'fa-check-circle',
+                danger: 'fa-times-circle',
+                warning: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+            }[type] || 'fa-info-circle';
+
+        const toast = document.createElement('div');
+        toast.className = 'notification-toast position-fixed top-0 end-0 p-3';
+        toast.style.zIndex = '1080';
+        toast.innerHTML = `
+        <div class="toast ant-toast shadow d-flex align-items-start bg-${type} text-white border-0 position-relative show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body d-flex flex-column pe-4">
+                <div class="d-flex align-items-center mb-1">
+                    <i class="fas ${icon} me-2 fs-5"></i>
+                    <strong class="me-auto text-capitalize">${type}</strong>
+                </div>
+                <div>${message}</div>
+            </div>
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+        document.body.appendChild(toast);
+
+        // Tự động xóa sau 3.5s
+        setTimeout(() => {
+            toast.remove();
+        }, 3500);
+    }
+
+    function showLoader() {
+        const loader = document.getElementById('loader-overlay');
+        if (loader) loader.style.display = 'flex';
+    }
+
+    // Gắn sự kiện submit
+    document.addEventListener("DOMContentLoaded", function () {
+        const updateForm = document.getElementById('updateStatusForm');
+        if (updateForm) {
+            updateForm.addEventListener('submit', function () {
+                showLoader(); // Hiện loader khi submit
+            });
+        }
+    });
+</script>
+
+<!-- ======== End custom Js for this page ========================= -->
+
+<!-- App js -->
+<script src="/assets/js/app.min.js"></script>

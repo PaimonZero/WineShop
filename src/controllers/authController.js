@@ -153,11 +153,7 @@ const login = asyncHandler(async (req, res) => {
     }
 
     // 4. Tạo token
-    const accessToken = tokenUtils.generateAccessToken(
-        userResponse._id,
-        userResponse.role,
-        userResponse.avatar
-    );
+    const accessToken = tokenUtils.generateAccessToken(userResponse._id, userResponse.role, userResponse.firstName, userResponse.avatar);
     const refreshToken = tokenUtils.generateRefreshToken(userResponse._id);
 
     // 5. Lưu refresh token vào DB
@@ -198,7 +194,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     return res.status(200).json({
         success: response ? true : false,
         newAccessToken: response
-            ? tokenUtils.generateAccessToken(response._id, response.role, response.avatar)
+            ? tokenUtils.generateAccessToken(response._id, response.role, response.firstName, response.avatar)
             : 'Refresh token is not valid!',
     });
 });
@@ -464,11 +460,7 @@ const googleCallback = asyncHandler(async (req, res) => {
     }
 
     // 1. Tạo token
-    const accessToken = tokenUtils.generateAccessToken(
-        req.user._id,
-        req.user.role,
-        req.user.avatar
-    );
+    const accessToken = tokenUtils.generateAccessToken(req.user._id, req.user.role, req.user.firstName, req.user.avatar);
     const refreshToken = tokenUtils.generateRefreshToken(req.user._id);
 
     // 2. Cập nhật refreshToken vào DB

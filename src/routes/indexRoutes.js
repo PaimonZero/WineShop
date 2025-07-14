@@ -32,7 +32,7 @@ const initRoutes = (app) => {
     // page invoice
     app.use('/api/invoice', invoiceRouter);
     // page admin
-    app.use('/api/admin', adminRouter);
+    app.use('/admin', [tokenUtils.verifyAccessToken, tokenUtils.isAdmin], adminRouter);
 
     // page UI
     app.use('/', customerHomePageRouter);

@@ -1,0 +1,345 @@
+<!-- ============================================================== -->
+<!-- Start Page Content here -->
+<!-- ============================================================== -->
+
+<div class="content">
+    <div class="container-fluid">
+        <!-- Page Title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="/admin/dashboard">Barrel&Vine</a></li>
+                            <li class="breadcrumb-item active">Coupons</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">Coupons</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <!-- Header -->
+                        <div class="row mb-2">
+                            <div class="col-sm-5">
+                                <a href="#" class="btn btn-danger mb-2" data-bs-toggle="modal"
+                                    data-bs-target="#couponModal" onclick="openCouponModal('add')">
+                                    <i class="mdi mdi-plus-circle me-2"></i> Add Coupon
+                                </a>
+                            </div>
+                            <div class="col-sm-7 text-sm-end">
+                                <!-- <button type="button" class="btn btn-light mb-2">Export</button> -->
+                                <div id="customExportContainer"></div>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-responsive">
+                            <table class="table table-centered table-striped dt-responsive nowrap w-100"
+                                id="coupons-datatable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 20px;">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </div>
+                                        </th>
+                                        <th>Name</th>
+                                        <th>Discount (vnd)</th>
+                                        <th>Expiry</th>
+                                        <th>Days Left</th>
+                                        <th>Created At</th>
+                                        <th style="width: 75px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% coupons.forEach((coupon, index)=> { %>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="couponCheck-<%= index %>">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <%= coupon.name %>
+                                            </td>
+                                            <td>
+                                                <%= coupon.discount.toLocaleString('vi-VN', { style: 'currency' ,
+                                                    currency: 'VND' }) %>
+                                            </td>
+                                            <td data-order="<%= new Date(coupon.expiry).getTime() %>">
+                                                <%= new Date(coupon.expiry).toLocaleDateString('vi-VN') %>
+                                            </td>
+                                            <% const now=new Date(); const expiryDate=new Date(coupon.expiry); const
+                                                timeDiff=expiryDate - now; const daysLeft=Math.ceil(timeDiff / (1000 *
+                                                60 * 60 * 24)); %>
+                                                <td class="fs-4" data-order="<%= new Date(daysLeft).getTime() %>">
+                                                    <% if (daysLeft> 0) { %>
+                                                        <span class="badge bg-success">
+                                                            <%= daysLeft %> days
+                                                        </span>
+                                                        <% } else { %>
+                                                            <span class="badge bg-danger">Expired</span>
+                                                            <% } %>
+                                                </td>
+                                                <td data-order="<%= new Date(coupon.createdAt).getTime() %>">
+                                                    <%= new Date(coupon.createdAt).toLocaleDateString('vi-VN') %>
+                                                </td>
+                                                <td class="table-action d-flex align-items-center gap-2">
+                                                    <!-- Edit -->
+                                                    <a href="#" class="action-icon" data-bs-toggle="modal"
+                                                        data-bs-target="#couponModal"
+                                                        data-coupon='<%- JSON.stringify(coupon).replace(/"/g, ' &quot;')
+                                                        %>'
+                                                        onclick='handleEditCoupon(this)'>
+                                                        <i class="mdi mdi-square-edit-outline"></i>
+                                                    </a>
+
+                                                    <!-- Delete -->
+                                                    <a href="#" class="action-icon text-danger" data-bs-toggle="modal"
+                                                        data-bs-target="#deleteCouponModal"
+                                                        onclick="prepareDeleteCoupon('<%= coupon._id %>')">
+                                                        <i class="mdi mdi-delete"></i>
+                                                    </a>
+                                                </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- end table -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- content -->
+
+<!-- Add/Edit Coupon Modal -->
+<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="couponModalForm" method="POST" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="couponModalLabel">Add Coupon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="couponName" class="form-label">Coupon Name</label>
+                    <input type="text" name="name" id="couponName" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="couponDiscount" class="form-label">Discount (vnd)</label>
+                    <input type="number" name="discount" id="couponDiscount" class="form-control" required min="1000" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="couponExpiry" class="form-label">Expiry Date</label>
+                    <input type="date" name="expiry" id="couponExpiry" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Coupon Modal -->
+<div class="modal fade" id="deleteCouponModal" tabindex="-1" aria-labelledby="deleteCouponModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="deleteCouponForm" method="POST" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteCouponModalLabel">Delete Coupon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete this coupon?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- End Page content -->
+<!-- ============================================================== -->
+
+<!-- Vendor js -->
+<script src="/assets/js/vendor.min.js"></script>
+
+<!-- ======== Start custom Js for this page ======================= -->
+<!-- Datatable js -->
+<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+<script src="/assets/vendor/jquery-datatables-checkboxes/js/dataTables.checkboxes.min.js"></script>
+<!-- Buttons Extension JS -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<!-- JSZip for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+<!-- Custom coupon js -->
+<script>
+    $(document).ready(function () {
+        'use strict';
+
+        const table = $('#coupons-datatable').DataTable({
+            dom: "<'row align-items-center mb-2'<'col-sm-6'l><'col-sm-6'f>>" +
+                "rt" +
+                "<'row align-items-center mt-2'<'col-sm-6'i><'col-sm-6'p>>",
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="mdi mdi-file-excel-outline me-1"></i> Export Selected',
+                    className: 'btn btn-light mb-2',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5], // Export Name, Discount, Expiry, Days Left, Created At
+                        modifier: { selected: true }
+                    }
+                }
+            ],
+            language: {
+                paginate: {
+                    previous: "<i class='mdi mdi-chevron-left'></i>",
+                    next: "<i class='mdi mdi-chevron-right'></i>",
+                },
+                info: 'Showing coupons _START_ to _END_ of _TOTAL_',
+                lengthMenu:
+                    'Display <select class="form-select form-select-sm ms-1 me-1">' +
+                    '<option value="5">5</option>' +
+                    '<option value="10">10</option>' +
+                    '<option value="20">20</option>' +
+                    '<option value="-1">All</option>' +
+                    '</select> coupons',
+                search: '',
+                searchPlaceholder: 'Search...'
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    orderable: false,
+                    className: 'select-checkbox',
+                    checkboxes: {
+                        selectRow: true,
+                        selectAllRender:
+                            '<div class="form-check">' +
+                            '<input type="checkbox" class="form-check-input dt-checkboxes">' +
+                            '<label class="form-check-label">&nbsp;</label>' +
+                            '</div>'
+                    },
+                    render: function (data, type, row, meta) {
+                        return type === 'display'
+                            ? '<div class="form-check">' +
+                            '<input type="checkbox" class="form-check-input dt-checkboxes">' +
+                            '<label class="form-check-label">&nbsp;</label>' +
+                            '</div>'
+                            : data;
+                    }
+                },
+                { targets: -1, orderable: false, className: 'dt-body-right' }
+            ],
+            columns: [
+                null, // Checkbox column
+                null, // Name
+                null, // Discount
+                null, // Expiry
+                null, // Days Left
+                null, // Created At
+                null  // Actions
+            ],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child'
+            },
+            pageLength: 5,
+            order: [[5, 'asc']],
+            drawCallback: function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                $('#coupons-datatable_length label').addClass('form-label');
+                document.querySelectorAll('.dataTables_wrapper .row .col-md-6').forEach((e) => {
+                    e.classList.add('col-sm-6');
+                    e.classList.remove('col-sm-12', 'col-md-6');
+                });
+            }
+        });
+
+        // Gắn export button ra ngoài bảng
+        table.buttons().container().appendTo('#customExportContainer');
+    });
+</script>
+
+<script>
+    const loader = document.getElementById('loader-overlay');
+
+    function showLoader() {
+        if (loader) loader.style.display = 'flex';
+    }
+
+    function handleEditCoupon(el) {
+        const data = el.getAttribute('data-coupon');
+        const coupon = JSON.parse(data);
+        openCouponModal('edit', coupon);
+    }
+
+    function openCouponModal(type, coupon = {}) {
+        const form = document.getElementById('couponModalForm');
+        const title = document.getElementById('couponModalLabel');
+
+        // Inputs
+        document.getElementById('couponName').value = coupon.name || '';
+        document.getElementById('couponDiscount').value = coupon.discount || '';
+        document.getElementById('couponExpiry').value = coupon.expiry
+            ? new Date(coupon.expiry).toISOString().split('T')[0]
+            : '';
+
+        if (type === 'add') {
+            form.action = '/admin/coupon-create';
+            form.method = 'POST';
+            title.textContent = 'Add Coupon';
+        } else {
+            form.action = `/admin/coupon-update/${coupon._id}`;
+            form.method = 'POST'; // hoặc 'PUT' nếu dùng override method
+            title.textContent = 'Edit Coupon';
+        }
+
+        // Thêm sự kiện để hiển thị loader khi submit
+        form.onsubmit = function () {
+            showLoader();
+        };
+    }
+
+    function prepareDeleteCoupon(cid) {
+        const form = document.getElementById('deleteCouponForm');
+        form.action = `/admin/coupon-delete/${cid}`;
+        form.onsubmit = function () {
+            const loader = document.getElementById('loader-overlay');
+            if (loader) loader.style.display = 'flex';
+        };
+    }
+</script>
+
+<!-- ======== End custom Js for this page ========================= -->
+
+<!-- App js -->
+<script src="/assets/js/app.min.js"></script>

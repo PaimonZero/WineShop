@@ -1,0 +1,291 @@
+<!-- ============================================================== -->
+<!-- Start Page Content here -->
+<!-- ============================================================== -->
+
+<div class="content">
+    <!-- Start Content-->
+    <div class="container-fluid">
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item">
+                                <a href="/admin/dashboard">Barrel&Vine</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="/admin/products">Products</a>
+                            </li>
+                            <li class="breadcrumb-item active">Product Detail</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">Product Detail</h4>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Form content -->
+                        <form action="/admin/product-create" method="POST" id="productForm">
+                            <div class="row">
+                                <!-- Left column -->
+                                <div class="col-xl-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Title</label>
+                                        <input type="text" name="title" class="form-control" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Description</label>
+                                        <textarea name="description" rows="5" class="form-control" required></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Brand</label>
+                                        <input type="text" name="brand" class="form-control" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Price</label>
+                                        <input type="number" name="price" class="form-control" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Quantity</label>
+                                        <input type="number" name="quantity" class="form-control" required />
+                                    </div>
+
+                                    <div class="mb-3" style="display: none;">
+                                        <label class="form-label">Status</label>
+                                        <select name="status" class="form-control">
+                                            <option value="inStock" selected>In Stock</option>
+                                            <option value="outOfStock">Out of Stock</option>
+                                            <option value="discontinued">Discontinued</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Category</label>
+                                        <select name="category" class="form-control">
+                                            <% categories.forEach(function(cat) { %>
+                                                <option value="<%= cat._id %>">
+                                                    <%= cat.title %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+
+                                    <!-- Hidden input to hold uploaded image filenames -->
+                                    <input type="hidden" name="images" id="imagesInput" />
+                                </div>
+
+                                <!-- Right column: Custom Upload + Preview -->
+                                <div class="col-xl-6">
+                                    <div class="mb-3 mt-3 mt-xl-0">
+                                        <label class="form-label">Upload Images</label>
+                                        <input type="file" id="imageInput" accept="image/*" multiple
+                                            class="form-control" />
+
+                                        <!-- Preview container -->
+                                        <div id="imagePreview" class="row mt-3"></div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                            </div>
+                            <!-- end row -->
+
+                            <button type="submit" class="btn btn-primary mt-3">
+                                Create Product
+                            </button>
+                        </form>
+                    </div>
+                    <!-- end card-body -->
+                </div>
+                <!-- end card-->
+            </div>
+            <!-- end col-->
+        </div>
+        <!-- end row-->
+    </div>
+    <!-- container -->
+</div>
+<!-- content -->
+
+<!-- ============================================================== -->
+<!-- End Page content -->
+<!-- ============================================================== -->
+
+<!-- Vendor js -->
+<script src="/assets/js/vendor.min.js"></script>
+
+<!-- ======== Start custom Js for this page ======================= -->
+<!-- Bootstrap Datepicker Plugin js -->
+<script src="/assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<!-- Select2 js  -->
+<script src="/assets/vendor/select2/js/select2.min.js"></script>
+<!-- Dropzone File Upload js -->
+<script src="/assets/vendor/dropzone/min/dropzone.min.js"></script>
+
+<script>
+    // <!-- Notification for display from script -->
+    function showNotification(type = 'info', message = '') {
+        const icon =
+            {
+                success: 'fa-check-circle',
+                danger: 'fa-times-circle',
+                warning: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+            }[type] || 'fa-info-circle';
+
+        const toast = document.createElement('div');
+        toast.className = 'notification-toast position-fixed top-0 end-0 p-3';
+        toast.style.zIndex = '1080';
+        toast.innerHTML = `
+        <div class="toast ant-toast shadow d-flex align-items-start bg-${type} text-white border-0 position-relative show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body d-flex flex-column pe-4">
+                <div class="d-flex align-items-center mb-1">
+                    <i class="fas ${icon} me-2 fs-5"></i>
+                    <strong class="me-auto text-capitalize">${type}</strong>
+                </div>
+                <div>${message}</div>
+            </div>
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+        document.body.appendChild(toast);
+
+        // Tự động xóa sau 3.5s
+        setTimeout(() => {
+            toast.remove();
+        }, 3500);
+    }
+
+    const loader = document.getElementById('loader-overlay');
+
+    function showLoader() {
+        // Đặt cờ vào sessionStorage để phân biệt giữa bấm link và dùng Back
+        sessionStorage.setItem('showLoader', 'true');
+        const loader = document.getElementById('loader-overlay');
+        if (loader) loader.style.display = 'flex';
+    }
+
+    function hideLoader() {
+        const loader = document.getElementById('loader-overlay');
+        if (loader) loader.style.display = 'none';
+    }
+
+    // Khi trang được load lại từ nút Back hoặc Reload
+    window.addEventListener('pageshow', function (event) {
+        // Nếu là từ bộ nhớ cache (bấm Back), ẩn loader nếu đang hiện
+        const loader = document.getElementById('loader-overlay');
+        if (event.persisted && loader) {
+            loader.style.display = 'none';
+        }
+
+        // Xóa cờ loader sau khi vào lại trang
+        sessionStorage.removeItem('showLoader');
+    });
+
+    // Custom script for uploading and previewing images
+    const imageInput = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('imagePreview');
+    const productForm = document.getElementById('productForm');
+
+    let selectedFiles = [];
+
+    // Khi chọn file: chỉ giữ ảnh của lần chọn mới nhất
+    imageInput.addEventListener('change', function () {
+        previewContainer.innerHTML = '';
+        selectedFiles = Array.from(this.files); // Ghi đè luôn
+
+        selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const fileSizeMB = (file.size / 1024 / 1024).toFixed(1);
+
+                const card = document.createElement('div');
+                card.classList.add('mb-2');
+                card.setAttribute('data-file-index', index);
+
+                card.innerHTML = `
+                    <div class="card p-2 d-flex flex-row align-items-center justify-content-between m-0 border border-secondary rounded">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="${e.target.result}" class="rounded bg-light" style="width: 60px; height: 60px; object-fit: cover;" />
+                            <div>
+                                <div class="text-muted fw-semibold">${file.name}</div>
+                                <small class="text-muted">${fileSizeMB} MB</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-link text-danger p-0 fs-4 remove-image" data-index="${index}">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
+                `;
+
+                previewContainer.appendChild(card);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // Xoá ảnh bằng nút "x"
+    previewContainer.addEventListener('click', function (e) {
+        const removeBtn = e.target.closest('.remove-image');
+        if (removeBtn) {
+            const index = parseInt(removeBtn.getAttribute('data-index'));
+            selectedFiles.splice(index, 1);
+
+            // Reset input file (không cho giữ lại giá trị cũ)
+            const dt = new DataTransfer();
+            selectedFiles.forEach((file) => dt.items.add(file));
+            imageInput.files = dt.files;
+
+            // Render lại preview
+            imageInput.dispatchEvent(new Event('change'));
+        }
+    });
+
+    // Submit form
+    productForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        showLoader();
+        await new Promise(requestAnimationFrame); // Cho loader kịp hiển thị
+
+        const formData = new FormData(productForm);
+        selectedFiles.forEach((file) => formData.append('images', file));
+
+        try {
+            const res = await fetch('/admin/product-create', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                const productId = result.productId;
+                const message = encodeURIComponent('Tạo sản phẩm thành công!');
+                window.location.href = `/admin/product-update/${productId}?type=success&message=${message}`;
+            } else {
+                hideLoader();
+                showNotification('danger', result.message || 'Tạo sản phẩm thất bại!');
+            }
+        } catch (err) {
+            hideLoader();
+            console.error(err);
+            showNotification('danger', 'Có lỗi xảy ra khi tạo sản phẩm!');
+        }
+    });
+</script>
+
+<!-- ======== End custom Js for this page ========================= -->
+
+<!-- App js -->
+<script src="/assets/js/app.min.js"></script>
