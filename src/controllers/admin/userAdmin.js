@@ -15,6 +15,7 @@ const renderUsersPage = asyncHandler(async (req, res) => {
             title: 'Manage Users',
             users: [],
             notification: { type: 'info', message: 'No users found.' },
+            account: req.user || null,
         });
     }
 
@@ -22,6 +23,7 @@ const renderUsersPage = asyncHandler(async (req, res) => {
         title: 'Manage Users',
         users,
         notification,
+        account: req.user || null,
     });
 });
 

@@ -16,45 +16,14 @@ const Coupon = require('@models/Coupon');
 const Invoice = require('@models/Invoice');
 const User = require('@models/User');
 
-const testView = asyncHandler(async (req, res) => {
-    // Dùng để truyền thông báo từ query string giữa các trang
-    // Ví dụ:   const message = encodeURIComponent('Tạo sản phẩm thành công!');
-    //          window.location.href = `/admin/products?type=success&message=${message}`;
-    //          return res.redirect('/admin/dashboard?type=success&message=Test EJS Dashboard');
-    const notification =
-        req.query.type && req.query.message
-            ? { type: req.query.type, message: req.query.message }
-            : null;
-
-    res.render('admin/dashboard', {
-        title: 'Test EJS Dashboard',
-        notification
-    });
-});
-
-const testOrders = asyncHandler(async (req, res) => {
-    const invoices = await Invoice.find();
-    res.render('admin/orders', {
-        title: 'Test EJS Orders',
-        notification: {
-            type: 'danger',
-            message: 'This is a test notification for the orders page.',
-        },
-        invoices: invoices,
-    });
-});
-
 // Set default layout for admin routes
 router.use((req, res, next) => {
     res.locals.layout = 'layouts/admin';
     next();
 });
 
-// Test route to dashboard view
+// Route to dashboard view
 router.get('/dashboard', ctrlsDashboard.renderDashboard);
-
-// Test route to orders view
-router.get('/orders', testOrders);
 
 // ______ Product Management Routes ______
 // Route to view products

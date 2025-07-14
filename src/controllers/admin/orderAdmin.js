@@ -23,6 +23,7 @@ const renderOrdersPage = asyncHandler(async (req, res) => {
             products,
             coupons,
             notification: { type: 'info', message: 'No orders found.' },
+            account: req.user || null,
         });
     }
 
@@ -32,6 +33,7 @@ const renderOrdersPage = asyncHandler(async (req, res) => {
         notification,
         products,
         coupons,
+        account: req.user || null,
     });
 });
 
@@ -56,6 +58,7 @@ const renderOrderDetailsPage = asyncHandler(async (req, res) => {
                 type: 'danger',
                 message: 'Order not found.',
             },
+            account: req.user || null,
         });
     }
 
@@ -66,6 +69,7 @@ const renderOrderDetailsPage = asyncHandler(async (req, res) => {
             type: 'info',
             message: `You are viewing order ${invoice._id} information!`,
         },
+        account: req.user || null,
     });
 });
 
@@ -118,6 +122,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
                 type: 'danger',
                 message: 'Order not found.',
             },
+            account: req.user || null,
         });
     }
 
@@ -136,7 +141,7 @@ const createNewOrder = asyncHandler(async (req, res) => {
         shippingAddress,
         paymentMethod,
     } = req.body;
-    const userId = '686102966ee81b49cba18912'; // 👈 Replace with req.user._id when auth is implemented
+    const userId = req?.user?._id; // 👈 Replace with req.user._id when auth is implemented
 
     if (!shippingAddress || !shippingName || !shippingPhone || !paymentMethod) {
         return res.redirect(
@@ -170,6 +175,7 @@ const createNewOrder = asyncHandler(async (req, res) => {
                 type: 'danger',
                 message: 'User not found.',
             },
+            account: req.user || null,
         });
     }
 

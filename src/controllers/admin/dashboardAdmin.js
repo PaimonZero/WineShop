@@ -176,6 +176,7 @@ const renderDashboard = asyncHandler(async (req, res) => {
             topSellingProducts,
             weeklyRevenue: weeks
         },
+        account: req.user || null,
     });
 });
 

@@ -22,6 +22,7 @@ const renderProductList = asyncHandler(async (req, res) => {
         title: 'Manage Products',
         notification,
         products,
+        account: req.user || null,
     });
 });
 
@@ -37,6 +38,7 @@ const renderCreateProductPage = asyncHandler(async (req, res) => {
             type: 'info',
             message: 'Fill in product information to create a new one.',
         },
+        account: req.user || null,
     });
 });
 
@@ -79,6 +81,7 @@ const createProduct = asyncHandler(async (req, res) => {
         message: 'Tạo sản phẩm thành công!',
         product: newProduct, // Trả về thông tin sản phẩm mới tạo
         productId: newProduct._id, // Trả về ID sản phẩm mới tạo
+        account: req.user || null,
     });
 });
 
@@ -93,6 +96,7 @@ const renderUpdateProductPage = asyncHandler(async (req, res) => {
         return res.status(404).render('admin/404', {
             title: 'Product Not Found',
             notification: { type: 'danger', message: 'Sản phẩm không tồn tại.' },
+            account: req.user || null,
         });
     }
 
@@ -108,6 +112,7 @@ const renderUpdateProductPage = asyncHandler(async (req, res) => {
         product,
         categories,
         notification,
+        account: req.user || null,
     });
 });
 

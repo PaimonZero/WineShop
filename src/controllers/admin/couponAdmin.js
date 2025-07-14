@@ -15,6 +15,7 @@ const renderCouponsPage = asyncHandler(async (req, res) => {
             title: 'Manage Coupons',
             coupons: [],
             notification: { type: 'info', message: 'No coupons found.' },
+            account: req.user || null,
         });
     }
 
@@ -22,6 +23,7 @@ const renderCouponsPage = asyncHandler(async (req, res) => {
         title: 'Manage Coupons',
         coupons,
         notification,
+        account: req.user || null,
     });
 });
 
