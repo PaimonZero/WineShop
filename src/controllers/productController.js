@@ -115,16 +115,22 @@ const deleteProduct = asyncHandler(async (req, res) => {
     });
 });
 
-// [PUT] Ratings for product
+// [POST] Ratings for product
 const ratings = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const { star, comment, pid } = req.body;
+    const { pid } = req.params;
+    const { star, comment } = req.body;
     if (!star || !pid) throw new Error('Missing input!');
 
     // Tìm sản phẩm
     const ratingProduct = await Product.findById(pid);
     if (!ratingProduct) {
-        return res.status(404).json({ success: false, message: 'Product not found.' });
+        req.session.notification = {
+            message: 'Bạn cần mua sản phẩm này trước khi đánh giá nhé!',
+            type: 'danger',
+        };
+
+        res.redirect(req.get('Referer') || '/');
     }
 
     // Kiểm tra đã mua hàng chưa và lấy invoice
@@ -134,10 +140,12 @@ const ratings = asyncHandler(async (req, res) => {
         products: { $elemMatch: { productId: pid } },
     });
     if (!invoice) {
-        return res.status(403).json({
-            success: false,
-            message: 'You must purchase this product before rating it.',
-        });
+        req.session.notification = {
+            message: 'Bạn cần mua sản phẩm này trước khi đánh giá!',
+            type: 'danger',
+        };
+
+        res.redirect(req.get('Referer') || '/');
     }
 
     // Kiểm tra đã đánh giá chưa
@@ -184,11 +192,14 @@ const ratings = asyncHandler(async (req, res) => {
     updatedProduct.totalRating = Math.round((ratingSum / totalRatings) * 10) / 10; // Làm tròn đến 1 chữ số thập phân xong dùng roud để thành N
     await updatedProduct.save();
 
-    res.status(200).json({
-        success: updatedProduct ? true : false,
-        message: alreadyRating ? 'Rating updated' : 'Rating added',
-        updatedProduct,
-    });
+    req.session.notification = {
+        message: alreadyRating
+            ? 'Cảm ơn bạn đã cập nhật đánh giá nhé!'
+            : 'Cảm ơn bạn đã đánh giá sản phẩm! Chúc bạn có được trải nghiệm tuyệt vời!',
+        type: updatedProduct ? 'success' : 'danger',
+    };
+
+    res.redirect(req.get('Referer') || '/');
 });
 
 // [PUT] Upload images for product (admin only) (max 10 images, config in routes)

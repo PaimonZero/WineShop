@@ -8,7 +8,7 @@ router.post('/', [tokenUtils.verifyAccessToken, tokenUtils.isAdmin], ctrls.creat
 // [GET] Get all products
 router.get('/', ctrls.getProducts);
 // [PUT] Update/ Create new ratings for a product
-router.put('/', tokenUtils.verifyAccessToken, ctrls.ratings);
+router.post('/:pid/review', tokenUtils.verifyAccessToken, ctrls.ratings);
 
 // [GET] Get a product by ID
 router.get('/:pid', ctrls.getProduct);

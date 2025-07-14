@@ -114,7 +114,7 @@
                     </div>
                     <div class="col-md-7">
                       <h6>Phương thức thanh toán: </h6>
-                      <strong class="text-dark"><%= invoice.paymentMethod === 'cash' ? 'Thanh toán khi nhận hàng' : invoice.paymentMethod %></strong>
+                      <strong class="text-dark"><%= invoice.paymentMethod === 'cash' ? 'Thanh toán khi nhận hàng' : "Thanh toán trực tuyến" %></strong>
                     </div>
                   </div>
                 </div>
@@ -197,42 +197,50 @@
             <!-- Step 4: Delivered -->
             <li class="step-wizard-item <%= status === 'shipped' ? 'current-item' : '' %>">
               <span class="progress-count">4</span>
-              <span class="progress-label">Delivered</span>
+              <span class="progress-label">Completed</span>
             </li>
 
           </ul>
         </div>
 
         <!-- Order Items -->
-        <table class="table table-hover">
-          <thead class="table-active">
-            <tr>
-              <th>Sản phẩm</th>
-              <th>Giá</th>
-              <th>Số lượng</th>
-              <!-- <th>Giảm giá</th> -->
-              <th>Tổng tiền</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% invoice.products.forEach(function(product) { %>
-            <tr>
-              <td class="d-flex align-items-center">
-                <!-- lưu ý: chỉ lấy tên ảnh, không có đường dẫn -->
-                <img src="<%= product.productId.images[0] %>" alt="<%= product.productId.title %>" class="product-img me-2" style="object-fit: contain;">
-                <span><%= product.productId.title %></span>
-              </td>
-              <td class="item-price"><%= product.price.toLocaleString('vi-VN') %>đ</td>
-              <td class="input-qty"><%= product.quantity %></td>
-              <!-- <td class="discount"><%= product.discountString %>%</td> -->
-              <td class="item-total-price">
-                <%= (product.price * product.quantity).toLocaleString('vi-VN') %>đ
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-active">
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <!-- <th>Giảm giá</th> -->
+                <th>Tổng tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% invoice.products.forEach(function(product) { %>
+              <tr>
+                <td class="d-flex align-items-center">
+                  <a href="/product/<%= product.productId._id %>/<%= product.productId.slug %>" class="text-decoration-none d-flex align-items-center">
+                    <!-- lưu ý: chỉ lấy tên ảnh, không có đường dẫn -->
+                    <img src="<%= product.productId.images[0] %>" alt="<%= product.productId.title %>" class="product-img me-2" style="object-fit: contain;">
+                    <span>
+                      <%= product.productId.title.length > 70 
+                          ? product.productId.title.substring(0, 70) + '...' 
+                          : product.productId.title %>
+                    </span>
+                  </a>
+                </td>
+                <td class="item-price"><%= product.price.toLocaleString('vi-VN') %>đ</td>
+                <td class="input-qty"><%= product.quantity %></td>
+                <!-- <td class="discount"><%= product.discountString %>%</td> -->
+                <td class="item-total-price">
+                  <%= (product.price * product.quantity).toLocaleString('vi-VN') %>đ
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
 
-        </table>
+          </table>
+        </div>
 
       </div>
     </div>

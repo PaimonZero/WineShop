@@ -1,5 +1,19 @@
 <link rel="stylesheet" href="/css/customerCss/productDetail.css" />
 
+<style>
+  .star {
+    font-size: 1.8rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .star.hovered,
+  .star.selected {
+    color: gold;
+  }
+</style>
+
 
 <section class="container mt-5">
   <div class="row">
@@ -145,7 +159,62 @@
           <p style="white-space: pre-line;"><%= product.description %></p>
         </div>
         <div class="tab-pane fade" id="reviews" role="tabpanel">
-          <p>Good</p>
+          <div class="container my-5">
+            <h4 class="mb-4">Nhận xét của khách hàng</h4>
+
+            <!-- Form gửi bình luận -->
+            <form action="/api/product/<%= product._id %>/review" method="POST" id="reviewForm" class="mb-4">
+              <div class="mb-3">
+                <label class="form-label d-block">Đánh giá của bạn:</label>
+                <div id="starRating">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                  <i class="far fa-star star selected" data-value="<%= i %>"></i>
+                  <% } %>
+                </div>
+                <input type="hidden" name="star" value='5' id="starInput" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Nhận xét:</label>
+                <textarea class="form-control" name="comment" rows="3" required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Gửi nhận xét</button>
+            </form>
+
+            <!-- Danh sách nhận xét -->
+            <% if (product.ratings && product.ratings.length > 0) { %>
+            <% product.ratings.forEach((rating) => { %>
+            <div class="border rounded p-3 mb-3">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <div>
+                  <% for (let i = 1; i <= 5; i++) { %>
+                  <i class="mdi mdi-star<%= i <= rating.star ? '' : '-outline' %> text-warning"></i>
+                  <% } %>
+                </div>
+                <strong>
+                  <% if (rating.star === 5) { %>Tuyệt vời!
+                  <% } else if (rating.star === 4) { %>Rất tốt
+                  <% } else if (rating.star === 3) { %>Bình thường
+                  <% } else if (rating.star === 2) { %>Tạm ổn
+                  <% } else { %>Tệ
+                  <% } %>
+                </strong>
+              </div>
+              <div class="mb-3">
+                <small class="text-muted">
+                  Đã đăng vào <%= rating.createdAt.toLocaleString('vi-VN') %> bởi
+                  <small class="text-decoration-underline"><%= rating.postedBy?.firstName || 'Người dùng' %></small>
+                </small>
+              </div>
+              <p class="mb-0"><%= rating.comment %></p>
+            </div>
+            <% }) %>
+            <% } else { %>
+            <p class="text-muted">Chưa có nhận xét nào.</p>
+            <% } %>
+          </div>
+
         </div>
       </div>
     </div>
@@ -176,3 +245,35 @@
     </div>
   </div>
 </section>
+
+<script>
+  const stars = document.querySelectorAll('#starRating .star');
+  const starInput = document.getElementById('starInput');
+  let selectedRating = 0;
+
+  stars.forEach((star, index) => {
+    // Hover
+    star.addEventListener('mouseover', () => {
+      stars.forEach((s, i) => {
+        s.classList.toggle('hovered', i <= index);
+      });
+    });
+
+    // Reset khi rời chuột
+    star.addEventListener('mouseout', () => {
+      stars.forEach((s, i) => {
+        s.classList.toggle('hovered', i < selectedRating);
+      });
+    });
+
+    // Click để chọn sao
+    star.addEventListener('click', () => {
+      selectedRating = index + 1;
+      starInput.value = selectedRating;
+
+      stars.forEach((s, i) => {
+        s.classList.toggle('selected', i < selectedRating);
+      });
+    });
+  });
+</script>

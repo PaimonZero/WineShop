@@ -10,9 +10,15 @@ const getProductDetailPage = asyncHandler(async (req, res) => {
     const { pid } = req.params;
 
     // Find the product by ID and populate the user info for ratings
-    const product = await Product.findById(pid).populate({
-        path: 'category',
-    });
+    const product = await Product.findById(pid)
+        .populate({
+            path: 'category',
+        })
+        .populate({
+            path: 'ratings.postedBy',
+            model: 'User',
+            select: 'firstName lastName avatar',
+        });
 
     if (!product) {
         // If product not found, render a 404 page
@@ -26,6 +32,11 @@ const getProductDetailPage = asyncHandler(async (req, res) => {
     })
         .populate({
             path: 'category',
+        })
+        .populate({
+            path: 'ratings.postedBy',
+            model: 'User',
+            select: 'firstName lastName avatar',
         })
         .limit(4); // Get up to 4 related products
 

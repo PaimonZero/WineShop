@@ -186,7 +186,7 @@
             <button type="submit" class="btn p-0 px-2 btn-danger">Xem chi tiết</button>
           </form>
         </td>
-      ` + (invoice.deliveryStatus !== 'cancelled' ?
+      ` + (invoice.deliveryStatus !== 'cancelled' && invoice.deliveryStatus !== 'shipped' && invoice.deliveryStatus !== 'completed' ?
           `<td class="align-middle">
           <a id="cancel-invoice" class="action-icon" onclick="cancelInvoice('${invoice._id}')" style="cursor: pointer;">
             <i class="far fa-trash-alt me-2" aria-hidden="true"></i>
