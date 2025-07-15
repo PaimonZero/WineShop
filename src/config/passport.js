@@ -37,7 +37,7 @@ passport.use(
                     googleId: profile.id,
                     email: profile.emails[0].value,
                     firstName: profile.name?.givenName || '',
-                    lastName: profile.name?.familyName || '',
+                    lastName: profile.name?.familyName || profile.name?.givenName || '',
                     avatar: profile.photos?.[0]?.value || '',
                     password: Math.random().toString(36).slice(-8), // dùng cho validation
                 });
