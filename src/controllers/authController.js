@@ -153,7 +153,12 @@ const login = asyncHandler(async (req, res) => {
     }
 
     // 4. Tạo token
-    const accessToken = tokenUtils.generateAccessToken(userResponse._id, userResponse.role, userResponse.firstName, userResponse.avatar);
+    const accessToken = tokenUtils.generateAccessToken(
+        userResponse._id,
+        userResponse.role,
+        userResponse.firstName,
+        userResponse.avatar
+    );
     const refreshToken = tokenUtils.generateRefreshToken(userResponse._id);
 
     // 5. Lưu refresh token vào DB
@@ -194,7 +199,12 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     return res.status(200).json({
         success: response ? true : false,
         newAccessToken: response
-            ? tokenUtils.generateAccessToken(response._id, response.role, response.firstName, response.avatar)
+            ? tokenUtils.generateAccessToken(
+                  response._id,
+                  response.role,
+                  response.firstName,
+                  response.avatar
+              )
             : 'Refresh token is not valid!',
     });
 });
@@ -202,7 +212,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 // [POST] logout user
 const logout = asyncHandler(async (req, res) => {
     const cookie = req.cookies;
-    if (!cookie?.refreshToken) throw new Error('No refresh token in cookies!');
+    if (!cookie?.refreshToken) {
+        req.session.notification = {
+            message: 'Tài khoản đã được đăng xuất rồi nhé!',
+            type: 'danger',
+        };
+        return res.redirect('/auth/login');
+    }
     await User.findOneAndUpdate(
         { refreshToken: cookie.refreshToken },
         { refreshToken: '' },
@@ -222,11 +238,9 @@ const logout = asyncHandler(async (req, res) => {
     //     success: true,
     //     mes: 'Logout successful!',
     // });
-    return res.render('login', {
-        title: 'Login Page',
-        notification: { message: 'Đăng xuất tài khoản thành công!', type: 'success' },
-        account: null,
-    });
+
+    req.session.notification = { message: 'Đăng xuất tài khoản thành công!', type: 'success' };
+    return res.redirect('/auth/login');
 });
 
 // [GET] auth/forgot-password Display forgot password page
@@ -460,7 +474,12 @@ const googleCallback = asyncHandler(async (req, res) => {
     }
 
     // 1. Tạo token
-    const accessToken = tokenUtils.generateAccessToken(req.user._id, req.user.role, req.user.firstName, req.user.avatar);
+    const accessToken = tokenUtils.generateAccessToken(
+        req.user._id,
+        req.user.role,
+        req.user.firstName,
+        req.user.avatar
+    );
     const refreshToken = tokenUtils.generateRefreshToken(req.user._id);
 
     // 2. Cập nhật refreshToken vào DB
