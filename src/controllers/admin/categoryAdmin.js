@@ -45,6 +45,7 @@ const renderCategoriesPage = asyncHandler(async (req, res) => {
         title: 'Manage Categories',
         categories,
         notification,
+        account: req.user || null,
     });
 });
 
