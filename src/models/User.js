@@ -11,7 +11,7 @@ var userSchema = new mongoose.Schema(
         lastName: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
-        mobile: { type: String, sparse: true, unique: true },
+        mobile: { type: String, required: false, sparse: true, unique: true },
         role: {
             type: String,
             enum: ['customer', 'staff', 'admin'],

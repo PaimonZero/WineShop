@@ -6,6 +6,7 @@ require('dotenv').config();
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
+
 passport.deserializeUser((id, done) => {
     User.findById(id).then((user) => done(null, user));
 });
@@ -33,11 +34,17 @@ passport.use(
                 }
 
                 // 3. Nếu email chưa tồn tại → tạo mới
+                // Xử lý name một cách an toàn
+                const name = profile.name || {};
+                const firstName = name.givenName || profile.displayName?.split(' ')[0] || '';
+                const lastName =
+                    name.familyName || profile.displayName?.split(' ').slice(1).join(' ') || '';
+
                 const newUser = await User.create({
                     googleId: profile.id,
                     email: profile.emails[0].value,
-                    firstName: profile.name?.givenName || '',
-                    lastName: profile.name?.familyName || profile.name?.givenName || '',
+                    firstName,
+                    lastName,
                     avatar: profile.photos?.[0]?.value || '',
                     password: Math.random().toString(36).slice(-8), // dùng cho validation
                 });
